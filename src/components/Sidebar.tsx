@@ -54,14 +54,14 @@ const Sidebar = () => {
                                 min="0"
                                 max="100"
                                 value={value}
-                                onChange={(e) => setValue(Number(e.target.value))}
+                                onChange={(e) => setValue(parseFloat(e.target.value))}
                                 className="w-full appearance-none h-2 rounded-full [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-3 [&::-webkit-slider-thumb]:border-black"
                                 style={{
                                     background: `linear-gradient(to right, lightgray ${value}%, black ${value}%)`,
                                 }}
                             />
                             <div className="flex items-center justify-between text-sm text-gray-500">
-                                <span>0 ETH</span>
+                                <span>{value} ETH</span>
                                 <span>100+ ETH</span>
                             </div>
                         </div>
