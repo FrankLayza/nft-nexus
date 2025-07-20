@@ -4,7 +4,7 @@ const Navbar = () => {
   return (
     <>
       <header className="bg-white border-b border-gray-200 px-6 py-4">
-        <div className="flex items-center justify-between">
+        <div className="container mx-auto flex items-center justify-between">
           <div>
             <h2 className="text-xl font-bold">NFT NEXUS</h2>
           </div>
