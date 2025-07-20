@@ -67,7 +67,7 @@ const Sidebar = () => {
                         </div>
                     </div>  
                     <div className="space-y-6 w-full mt-6">
-                        <div tabIndex={0} className={`collapse collapse-arrow ${collapsed === "blockchain" ? "collapse-open" : "collapse-close" } border border-gray-200 bg-gray-50 rounded-md w-full`}>
+                        <div tabIndex={0} className={`collapse collapse-arrow ${collapsed === "blockchain" ? "collapse-open" : "collapse-close" } border border-gray-200 bg-transparent rounded-md w-full`}>
                             <div className="collapse-title font-medium text-sm text-gray-600" onClick={() => setCollapsed(collapsed === "blockchain" ? null : "blockchain")}>Blockchain</div>
                             <div className="collapse-content">
                                 {
@@ -86,7 +86,7 @@ const Sidebar = () => {
                                 }
                             </div>
                         </div>
-                        <div tabIndex={0} className={`collapse collapse-arrow ${collapsed === "availability" ? "collapse-open" : "collapse-close" } border border-gray-200 bg-gray-50 rounded-md w-full`}>
+                        <div tabIndex={0} className={`collapse collapse-arrow ${collapsed === "availability" ? "collapse-open" : "collapse-close" } border border-gray-200 bg-transparent rounded-md w-full`}>
                             <div className="collapse-title font-medium text-sm text-gray-600" onClick={() => setCollapsed(collapsed === "availability" ? null : "availability")}>Availability</div>
                             <div className="collapse-content">
                                 <div className="flex items-center space-x-3 mb-2">
@@ -115,7 +115,7 @@ const Sidebar = () => {
                                 </div>
                             </div>
                         </div>
-                        <div tabIndex={0} className={`collapse collapse-arrow ${collapsed === "collection" ? "collapse-open" : "collapse-close" } border border-gray-200 bg-gray-50 rounded-md w-full`}>
+                        <div tabIndex={0} className={`collapse collapse-arrow ${collapsed === "collection" ? "collapse-open" : "collapse-close" } border border-gray-200 bg-transparent rounded-md w-full`}>
                             <div className="collapse-title font-medium text-sm text-gray-600" onClick={() => setCollapsed(collapsed === "collection" ? null : "collection")}>Collections</div>
                             <div className="collapse-content">
                                 {collections.map((collection) => (
@@ -134,7 +134,7 @@ const Sidebar = () => {
                                 ))}
                             </div>
                         </div>
-                        <div tabIndex={0} className={`collapse collapse-arrow ${collapsed === "rarity" ? "collapse-open" : "collapse-close" } border border-gray-200 bg-gray-50 rounded-md w-full`}>
+                        <div tabIndex={0} className={`collapse collapse-arrow ${collapsed === "rarity" ? "collapse-open" : "collapse-close" } border border-gray-200 bg-transparent rounded-md w-full`}>
                             <div className="collapse-title font-medium text-sm text-gray-600" onClick={() => setCollapsed(collapsed === "rarity" ? null : "rarity")}>Rarity</div>
                             <div className="collapse-content">
                                 <div className="flex items-center space-x-3 mb-2">
