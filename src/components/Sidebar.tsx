@@ -18,6 +18,7 @@ const collections = [
 ];
 const Sidebar = () => {
     const [collapsed, setCollapsed] = useState<string | null>(null);
+    const [value, setValue] = useState(0);
     return (  
         <>
             <aside className="w-80 bg-white border-r border-gray-200 h-[calc(100vh-73px)] overflow-y-auto sticky top-4">
@@ -48,9 +49,23 @@ const Sidebar = () => {
                         </div>
                         <div>
                             <h3 className="text-sm font-medium mb-2">Price Range</h3>
-                            <input type="range" min="0" max="100" className="w-full" />
+                            <input
+                                type="range"
+                                min="0"
+                                max="100"
+                                value={value}
+                                onChange={(e) => setValue(Number(e.target.value))}
+                                className="w-full appearance-none h-2 rounded-full [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-3 [&::-webkit-slider-thumb]:border-black"
+                                style={{
+                                    background: `linear-gradient(to right, lightgray ${value}%, black ${value}%)`,
+                                }}
+                            />
+                            <div className="flex items-center justify-between text-sm text-gray-500">
+                                <span>0 ETH</span>
+                                <span>100+ ETH</span>
+                            </div>
                         </div>
-                    </div>
+                    </div>  
                     <div className="space-y-6 w-full mt-6">
                         <div tabIndex={0} className={`collapse collapse-arrow ${collapsed === "blockchain" ? "collapse-open" : "collapse-close" } border border-gray-200 bg-gray-50 rounded-md w-full`}>
                             <div className="collapse-title font-medium text-sm text-gray-600" onClick={() => setCollapsed(collapsed === "blockchain" ? null : "blockchain")}>Blockchain</div>
