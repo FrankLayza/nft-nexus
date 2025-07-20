@@ -1,15 +1,55 @@
-# React + TypeScript + Vite
+# NFT Analyzer dApp
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A decentralized AI-powered NFT analysis platform built using JuliaOS agent infrastructure and a custom React + Tailwind CSS frontend. The platform enables users to evaluate NFT collections using AI models, agent swarms, and optional on-chain data interaction.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Overview
 
-## Expanding the ESLint configuration
+The NFT Analyzer helps users:
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- Get real-time insights and metadata analysis on NFTs
+- Understand market trends and floor price fluctuations
+- Evaluate rarity, sentiment, and community performance using AI agents
+- Interact optionally with blockchain data sources or contracts
+
+This project leverages **JuliaOS** for agent logic, swarm orchestration, and optional no-code dashboarding.
+
+---
+
+## Features
+
+- **AI Agent Execution**  
+  Uses `agent.useLLM()` to analyze NFT metadata, floor price trends, and community signals.
+
+- **Swarm Coordination**  
+  JuliaOS Swarm is used to assign tasks to multiple agents (e.g. image analysis, metadata parsing, valuation scoring).
+
+- **NFT Valuation Engine**  
+  Fetches NFT data and runs it through custom scoring logic using machine learning outputs.
+
+- **Custom React + Tailwind UI**  
+  A professional UI for users to search, analyze, and compare NFT collections and tokens.
+
+- **Optional Blockchain Access**  
+  Can query floor prices and collection info directly from APIs like Alchemy, OpenSea, or on-chain contracts (Ethereum, Solana, etc).
+
+---
+
+## Tech Stack
+
+- **Frontend**: React + TypeScript + Tailwind CSS + Vite
+- **Backend / Agent Layer**: JuliaOS agents & swarms
+- **AI**: `agent.useLLM()` for NLP-based scoring
+- **Blockchain (optional)**: Alchemy SDK, OpenSea API, or RPC interaction
+
+---
+
+## ESLint Configuration (for Devs)
+
+This project uses a minimal ESLint setup for TypeScript + React via Vite.
+
+To expand linting capabilities for production apps, consider using:
 
 ```js
 export default tseslint.config([
@@ -17,53 +57,15 @@ export default tseslint.config([
   {
     files: ['**/*.{ts,tsx}'],
     extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
       ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
       ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
       ...tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
     ],
     languageOptions: {
       parserOptions: {
         project: ['./tsconfig.node.json', './tsconfig.app.json'],
         tsconfigRootDir: import.meta.dirname,
       },
-      // other options...
     },
   },
 ])
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
