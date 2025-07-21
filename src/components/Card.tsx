@@ -18,23 +18,32 @@ const Card = ({
   AIEstimateValue,
 }: CardProps) => {
   return (
-    <div className="card bg-base-100 shadow-xl">
+    <div className="card bg-base-100 border border-gray-200 cursor-pointer transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5">
       <figure>
         <img src={image} alt="NFT" />
       </figure>
-      <div className="card-body">
-        <h2 className="card-title font-bold">{title}</h2>
-        <p>{description}</p>
-      </div>
-      <div className="py-2">
-          <div className="flex justify-between items-center px-6">
-            <p>{price}</p>
-            <p>{AIEstimate}</p>
+      <div className="px-4 py-2">
+        <div> 
+          <h2 className="font-bold">{title}</h2>
+          <p className="text-sm">{description}</p>
+        </div>
+        <div className="py-2">
+            <div className="flex justify-between items-center text-xs text-gray-500 capitalize">
+              <p>{price}</p>
+              <p>{AIEstimate}</p>
+            </div>
+            <div className="flex justify-between items-center text-xl tracking-wider">
+              <p className="font-bold">{priceValue}</p>
+              <p className="font-bold text-green-600">{AIEstimateValue}</p>
+            </div>
+        </div>
+
+        <div className="flex justify-between items-center">
+          <div>
+            <p>Rarity:</p>
+            <p>9.0</p>
           </div>
-          <div className="flex justify-between items-center px-6">
-            <p>{priceValue}</p>
-            <p>{AIEstimateValue}</p>
-          </div>
+        </div>
       </div>
     </div>
   );

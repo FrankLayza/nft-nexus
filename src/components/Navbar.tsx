@@ -23,6 +23,8 @@ const Navbar = () => {
               className="input input-bordered w-24 md:w-auto"
             />
           </div>
+
+          <appkit-button />
         </div>
       </header>
     </>
