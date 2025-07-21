@@ -64,7 +64,7 @@ const mockData = [
 const CardGrid = ({ className }: CardGridProps) => {
   // const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   return (
-    <div className="px-5 py-6 flex-1">
+    <div className="flex-1">
       <div className="flex justify-between w-full items-center">
         <div className="flex items-center space-x-4 flex-1">
           <h1 className="text-2xl font-bold">Explore NFTs</h1>
