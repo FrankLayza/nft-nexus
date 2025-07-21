@@ -21,7 +21,7 @@ const Sidebar = () => {
     const [value, setValue] = useState(0);
     return (  
         <>
-            <aside className="w-80 bg-white border-r border-gray-200 h-[100vh] overflow-y-auto sticky top-0 pb-20">
+            <aside className="w-80 bg-white border-r border-gray-200 h-[100vh] overflow-y-auto sticky top-0">
                 <div className="py-6 px-4">
                     <div className="flex items-center justify-between mb-6">
                         <h2 className="text-lg font-semibold flex items-center">
