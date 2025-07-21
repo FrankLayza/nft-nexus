@@ -3,6 +3,7 @@ import { useState } from "react";
 import Button from "./ui/Button";
 import Badge from "./ui/Badge";
 import Separator from "./ui/Separator";
+import Progress from "./ui/Progress";
 
 const AgentPanel = () => {
     const [selectedNFT, setSelectedNFT] = useState<boolean>(true);
@@ -62,7 +63,7 @@ const AgentPanel = () => {
                                         <span className="text-sm font-medium">Confidence</span>
                                         <span className="text-sm text-gray-600">87%</span>
                                     </div>
-                                    <progress className="progress progress-neutral w-full" value="87" max="100"></progress>
+                                    <Progress value="87" max="100" className="progress-neutral"></Progress>
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-3 text-sm">
