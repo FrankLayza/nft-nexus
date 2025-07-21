@@ -9,7 +9,7 @@ const Home = () => {
       <Navbar />
 
       <div className="flex-grow">
-        <main className="container min-h-screen mx-auto flex flex-row h-[calc(100vh-80px)]">
+        <main className="container min-h-screen mx-auto flex flex-row">
           <Sidebar />
           <div className="flex flex-row flex-1 p-6 gap-6">
             <CardGrid />

@@ -1,6 +1,12 @@
-import { Bot, Brain } from "lucide-react";
+import { Bot, Brain, Zap, TrendingUp } from "lucide-react";
+import { useState } from "react";
+import Badge from "./ui/Badge";
 
-const agentPanel = () => {
+const AgentPanel = () => {
+    const [selectedNFT, setSelectedNFT] = useState<boolean>(true);
+    const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false);
+    const [agentInsights, setAgentInsights] = useState<"BUY" | "SELL" | null>("BUY");
+    
     return (  
         <div className="h-fit w-56 rounded-lg border border-gray-300 bg-white">
             <div className="flex flex-col py-6 px-4 pb-3 items-center">
@@ -10,13 +16,90 @@ const agentPanel = () => {
                     </div>
                     <span className="text-md font-semibold leading-none tracking-tight">AI Agent Analysis</span>
                 </div>
-                <div className="text-center py-8 text-gray-500">
-                    <Brain className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                    <p className="text-sm">Select an NFT to get AI-powered insights</p>
+                {
+                    selectedNFT ? (
+                        <div className="py-4 w-full space-y-4">
+                            <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                                <img
+                                    src="https://placehold.co/600x400"
+                                    alt=""
+                                    className="w-12 h-12 object-cover rounded-lg"
+                                />
+                                <div className="flex-1 min-w-0">
+                                    <h4 className="font-medium truncate">NFT 1</h4>
+                                    <p className="text-sm text-gray-600">Pi Punks</p>
+                                </div>
+                            </div>
+                            <button onClick={() => setIsAnalyzing(!isAnalyzing)} disabled={isAnalyzing} className="btn btn-neutral text-white w-full disabled:pointer-events-none">
+                                {isAnalyzing ? (
+                                    <>
+                                    <Zap className="w-4 h-4 mr-2 animate-pulse" />
+                                    Analyzing...
+                                    </>
+                                ) : (
+                                    <>
+                                    <Brain className="w-4 h-4 mr-2" />
+                                    Run AI Analysis
+                                    </>
+                                )}
+                            </button>
+                        </div>
+                    ) : (
+                        <div className="text-center py-8 text-gray-500">
+                            <Brain className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                            <p className="text-sm">Select an NFT to get AI-powered insights</p>
+                        </div>
+                    )
+                }
+                <div className="space-y-4 w-full">
+                    <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium">Recommendation</span>
+                        <Badge
+                        className={`${agentInsights === "BUY" ? "bg-green-100 text-green-800 border-green-200" : agentInsights === "SELL" ? "bg-red-100 text-red-800 border-red-200" : "bg-yellow-100 text-yellow-800 border-yellow-200"} `}>
+                        {agentInsights}
+                        </Badge>
+                    </div>
+                </div>
+                <div className="w-full mt-2">
+                    <div>
+                        <div className="flex items-center justify-between mb-2">
+                            <span className="text-sm font-medium">Confidence</span>
+                            <span className="text-sm text-gray-600">87%</span>
+                        </div>
+                        <progress className="progress progress-neutral w-full" value="87" max="100"></progress>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3 text-sm">
+                        <div>
+                            <p className="text-gray-600">Price Target</p>
+                            <p className="font-bold text-green-600">3.8 ETH</p>
+                        </div>
+                        <div>
+                            <p className="text-gray-600">Risk Level</p>
+                            <p className="font-semibold">Medium</p>
+                        </div>
+                    </div>
+                </div>
+                <div className="bg-gray-400 h-[0.5px] w-full my-4"></div>
+                <div className="space-y-2 w-full">
+                    <h4 className="font-medium text-sm">Market Insights</h4>
+                    <div className="flex items-center justify-between text-sm font-semibold">
+                        <span className="text-gray-600">Sentiment</span>
+                        <div className="flex items-center gap-1">
+                            <TrendingUp className="w-4 h-4 text-green-500" />
+                            <span className="text-green-600">Bullish</span>
+                        </div>
+                    </div>
+                    <div className="flex items-center justify-between font-semibold text-sm">
+                        <span className="text-gray-600">Volume Spike</span>
+                        <Badge className="bg-neutral-100 text-neutral-800 border-neutral-200">
+                            Yes
+                        </Badge>
+                    </div>
                 </div>
             </div>
         </div>
     );
 }
  
-export default agentPanel;
+export default AgentPanel;
