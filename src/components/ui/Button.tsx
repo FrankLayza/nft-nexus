@@ -1,5 +1,3 @@
-import React from "react";
-
 interface ButtonProps {
     children: React.ReactNode;
     className?: string;
@@ -7,12 +5,7 @@ interface ButtonProps {
     type?: "button" | "submit" | "reset";
 }
 
-const Button: React.FC<ButtonProps> = ({ 
-    children, 
-    className = "", 
-    onClick, 
-    type = "button" 
-}) => {
+const Button = ({children, className="", onClick, type="button"}: ButtonProps) => {
     return (
         <button 
             type={type} 
