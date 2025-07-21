@@ -1,16 +1,10 @@
-import React from "react";
-
 type ProgressProps = {
   value?: string;
   max?: string;
   className?: string;
 }
 
-const Progress: React.FC<ProgressProps> = ({
-    value,
-    max,
-    className
-}) => {
+const Progress = ({value="10", max="100", className}: ProgressProps) => {
     return (  
         <progress className={`progress w-full ${className}`} value={value} max={max}></progress>
     );
