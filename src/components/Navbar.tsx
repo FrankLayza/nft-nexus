@@ -23,12 +23,12 @@ const Navbar = () => {
             <Button className="btn btn-ghost">ANALYTICS</Button>
           </nav>
 
-          <div className="hidden xl:flex">
+          {/* <div className="hidden xl:flex">
             <Input
               type="search"
               className="w-24 md:w-auto"
             />
-          </div>
+          </div> */}
 
           <appkit-button />
         </div>

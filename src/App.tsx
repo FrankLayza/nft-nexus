@@ -4,6 +4,7 @@ import { wagmiAdapter, projectId, metadata, networks } from "./config";
 import Home from "./pages/Home";
 import DYORPage from "./components/DYORPage";
 import Dashboard from "./components/Dashboard";
+import SearchPage from "./components/SearchPage";
 
 createAppKit({
   adapters: [wagmiAdapter],
@@ -20,6 +21,7 @@ function App() {
         <Route path="/" element={<Home />}>
           <Route index element={<Dashboard />} />
           <Route path="dyor" element={<DYORPage />} />
+          <Route path="Search" element={<SearchPage />} />
         </Route>
       </Routes>
     </>
