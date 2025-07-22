@@ -208,6 +208,14 @@ const Sidebar = ({ isOpen }: { isOpen: boolean }) => {
                 </div>
                 {SidebarContent}
             </aside>
+
+            {/* Overlay for Mobile */}
+            {isOpen && (
+                <div
+                className="fixed inset-0 bg-black/70 bg-opacity-40 z-40 xl:hidden transition-opacity duration-300"
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+                />
+            )}
         </>
     );
 }

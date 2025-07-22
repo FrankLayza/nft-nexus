@@ -3,8 +3,8 @@ import { useState } from "react";
 import { Grid, List } from "lucide-react";
 import { fetchNftCollection } from "../utils/fetchNFT";
 import { useQuery } from "@tanstack/react-query";
-import Button from "./Button";
-import Card from "./Card";
+import Button from "./ui/Button";
+import Card from "./ui/Card";
 type CardGridProps = {
   className?: string;
 };
@@ -79,7 +79,7 @@ const CardGrid = ({ className }: CardGridProps) => {
         <div className="xl:flex items-center space-x-4 flex-1">
           <h1 className="text-2xl font-bold">Explore NFTs</h1>
           <div className="badge badge-soft text-sm">
-            {data.length} items
+            {mockData.length} items
           </div>
         </div>
         <div className="flex items-center gap-3">
