@@ -2,7 +2,7 @@ import Input from "./ui/Input";
 import Button from "./ui/Button";
 import Badge from "./ui/Badge";
 import { Search, ArrowUpRight } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import UtilityPanel from "./RightPanel";
 import { useSearchQuery } from "../contexts/SearchQueryContext";
 
@@ -51,6 +51,17 @@ const SearchPage = () => {
     const {searchQuery, setSearchQuery} = useSearchQuery();
     const [isSearching, setIsSearching] = useState<boolean>(false);
 
+    useEffect(() => {
+        if (!searchQuery) return;
+
+        setIsSearching(true);
+        const timeout = setTimeout(() => {
+            setIsSearching(false);
+        }, 5000);
+
+        return () => clearTimeout(timeout);
+    }, [searchQuery]);
+
     return (
         <div className="flex flex-row gap-6">
             <div className="space-y-6 flex-1">
@@ -72,6 +83,7 @@ const SearchPage = () => {
                                 onChange={(e) => setSearchQuery(e.target.value)}
                             />
                             <Button 
+                                disabled={isSearching}
                                 onClick={async () => {
                                     setIsSearching(true);
                                     // Simulate an API call
@@ -121,7 +133,7 @@ const SearchPage = () => {
                                     {mockNFTs.map((collection, index) => (
                                         <div
                                         key={index}
-                                        className="flex items-center space-x-4 p-4 border border-gray-300 rounded-lg cursor-pointer"
+                                        className="flex flex-col lg:flex-row items-center space-x-4 p-4 border border-gray-300 rounded-lg cursor-pointer"
                                         >
                                         <div className="w-15 h-15 overflow-hidden rounded-lg">
                                             <img
@@ -131,7 +143,7 @@ const SearchPage = () => {
                                             />
                                         </div>
                                         <div className="flex-1">
-                                            <div className="flex items-center gap-2 mb-1">
+                                            <div className="flex justify-between w-full lg:justify-start mt-4 lg:mt-0 items-center gap-2 lg:mb-1 mb-2">
                                                 <h4 className="font-semibold truncate">{collection.name}</h4>
                                                 {collection.verified && (
                                                     <Badge className="text-xs">
@@ -141,29 +153,29 @@ const SearchPage = () => {
                                             </div>
                                             <p className="text-sm text-gray-500 mb-2 line-clamp-2">{collection.description}</p>
                                             <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
-                                            <div>
-                                                <span className="text-gray-500">Floor:</span>
-                                                <div className="font-medium">{collection.floorPrice}</div>
-                                            </div>
-                                            <div>
-                                                <span className="text-gray-500">24h Vol:</span>
-                                                <div className="font-medium">{collection.volume24h}</div>
-                                            </div>
-                                            <div>
-                                                <span className="text-gray-500">Change:</span>
-                                                <div
-                                                className={`font-medium ${collection.change24h.startsWith("+") ? "text-green-600" : "text-red-600"}`}
-                                                >
-                                                {collection.change24h}
+                                                <div>
+                                                    <span className="text-gray-500">Floor:</span>
+                                                    <div className="font-medium">{collection.floorPrice}</div>
+                                                </div>
+                                                <div>
+                                                    <span className="text-gray-500">24h Vol:</span>
+                                                    <div className="font-medium">{collection.volume24h}</div>
+                                                </div>
+                                                <div>
+                                                    <span className="text-gray-500">Change:</span>
+                                                    <div
+                                                    className={`font-medium ${collection.change24h.startsWith("+") ? "text-green-600" : "text-red-600"}`}
+                                                    >
+                                                    {collection.change24h}
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <span className="text-gray-500">Holders:</span>
+                                                    <div className="font-medium">{collection.holders}</div>
                                                 </div>
                                             </div>
-                                            <div>
-                                                <span className="text-gray-500">Holders:</span>
-                                                <div className="font-medium">{collection.holders}</div>
-                                            </div>
-                                            </div>
                                         </div>
-                                        <Button>
+                                        <Button className="hidden lg:block">
                                             <ArrowUpRight className="h-4 w-4" />
                                         </Button>
                                         </div>

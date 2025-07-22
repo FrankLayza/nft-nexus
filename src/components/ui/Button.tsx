@@ -1,17 +1,14 @@
-interface ButtonProps {
+type ButtonProps = {
     children: React.ReactNode;
     className?: string;
-    onClick?: () => void;
     type?: "button" | "submit" | "reset";
-}
+}& React.ButtonHTMLAttributes<HTMLButtonElement>;
 
-const Button = ({children, className="", onClick, type="button"}: ButtonProps) => {
+const Button = ({children, className="", type="button", ...props}: ButtonProps) => {
     return (
         <button 
             type={type} 
-            onClick={onClick} 
-            className={`btn transition-all duration-300 ${className}`}
-        >
+            className={`btn transition-all duration-300 ${className}`} {...props}>
             {children}
         </button>
     );
