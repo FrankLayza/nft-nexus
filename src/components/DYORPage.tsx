@@ -1,5 +1,4 @@
 import { useState } from "react";
-import Button from "./ui/Button";
 import Badge from "./ui/Badge";
 import { Brain } from "lucide-react";
 
@@ -9,9 +8,9 @@ const DYORPage = () => {
     const [isAnalyzing, setIsAnalyzing] = useState(false);
 
     const dummyResponse = [
-    "Based on my analysis, this NFT collection shows strong fundamentals with a growing community of 15K+ holders. The floor price has increased 23% over the last 30 days, indicating healthy demand. Key traits to watch: rare backgrounds (2% occurrence) and legendary accessories (0.5% occurrence). Market sentiment is bullish with increasing social media mentions.",
-    "The Bored Ape Yacht Club (BAYC) is a highly sought-after NFT collection with a strong community and brand. The floor price has consistently remained above 50 ETH, indicating high demand. Key traits include unique fur colors (1% occurrence) and rare clothing items (0.2% occurrence). Market sentiment is extremely positive with BAYC being featured in major media outlets and collaborations with top brands.",
-    "Azuki NFTs have gained significant traction with a dedicated community of 20K+ holders. The floor price has seen a steady increase of 15% over the past month. Key traits to look for include rare hair colors (3% occurrence) and unique accessories (1% occurrence). Market sentiment is optimistic, with many collectors expressing confidence in Azuki's long-term value.",
+        "Based on my analysis, this NFT collection shows strong fundamentals with a growing community of 15K+ holders. The floor price has increased 23% over the last 30 days, indicating healthy demand. Key traits to watch: rare backgrounds (2% occurrence) and legendary accessories (0.5% occurrence). Market sentiment is bullish with increasing social media mentions.",
+        "The Bored Ape Yacht Club (BAYC) is a highly sought-after NFT collection with a strong community and brand. The floor price has consistently remained above 50 ETH, indicating high demand. Key traits include unique fur colors (1% occurrence) and rare clothing items (0.2% occurrence). Market sentiment is extremely positive with BAYC being featured in major media outlets and collaborations with top brands.",
+        "Azuki NFTs have gained significant traction with a dedicated community of 20K+ holders. The floor price has seen a steady increase of 15% over the past month. Key traits to look for include rare hair colors (3% occurrence) and unique accessories (1% occurrence). Market sentiment is optimistic, with many collectors expressing confidence in Azuki's long-term value.",
   ]
     return (  
         <div className="space-y-6">
@@ -67,14 +66,14 @@ const DYORPage = () => {
                             <div className="text-gray-700">
                                 <p className="text-sm leading-relaxed">{response}</p>
                                 <div className="mt-4 flex items-center gap-2 text-xs">
-                                    <Badge className="text-gray-950">AI Confidence: {Math.floor(Math.random() * 20 + 80)}%</Badge>
+                                    <Badge className="text-gray-950">AI Confidence: 88%</Badge>
                                     <span>•</span>
-                                    <span className="font-medium">Analysis completed in {(Math.random() * 3 + 1).toFixed(1)}s</span>
+                                    <span className="font-medium">Analysis completed in 4s</span>
                                 </div>
                             </div>
                         </div>
                     )}
-                    </div>
+                </div>
             </div>
         </div>
     );
