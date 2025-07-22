@@ -1,11 +1,15 @@
 // import Card from "./Card";
 import { useState } from "react";
 import { Grid, List } from "lucide-react";
+import { fetchNftCollection } from "../utils/fetchNFT";
+import { useQuery } from "@tanstack/react-query";
 import Button from "./Button";
 import Card from "./Card";
 type CardGridProps = {
   className?: string;
 };
+
+
 
 const mockData = [
   {
@@ -64,6 +68,10 @@ const mockData = [
   },
 ];
 const CardGrid = ({ className }: CardGridProps) => {
+  const { data, error, isLoading } = useQuery({
+    queryKey: ["nft-collection"],
+    queryFn: fetchNftCollection,
+  });
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   return (
     <div className="flex-1">
@@ -106,7 +114,7 @@ const CardGrid = ({ className }: CardGridProps) => {
       <div
         className={`${className} grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 py-3`}
       >
-        {mockData.map((card, id) => (
+        {/* {mockData.map((card, id) => (
           <div key={id}>
             <Card
               image={card.image}
@@ -116,6 +124,17 @@ const CardGrid = ({ className }: CardGridProps) => {
               AIEstimateValue={card.AIEstimateValue}
               price={card.price}
               priceValue={card.priceValue}
+            />
+          </div>
+        ))} */}
+
+        {data?.map((nft) => (
+          <div key={nft.identifier}>
+            <Card 
+              image={nft.image_url}
+              title={nft.name}
+              description={nft.description}
+              
             />
           </div>
         ))}
