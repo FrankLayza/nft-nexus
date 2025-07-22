@@ -79,7 +79,7 @@ const CardGrid = ({ className }: CardGridProps) => {
         <div className="xl:flex items-center space-x-4 flex-1">
           <h1 className="text-2xl font-bold">Explore NFTs</h1>
           <div className="badge badge-soft text-sm">
-            {mockData.length} items
+            {data.length} items
           </div>
         </div>
         <div className="flex items-center gap-3">
