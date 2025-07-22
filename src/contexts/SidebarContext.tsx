@@ -1,12 +1,12 @@
 import { createContext, useContext, useState } from "react";
 
 type SidebarContextType = {
-  sidebarOpen: boolean;
-  setSidebarOpen: (open: boolean) => void;
+    sidebarOpen: boolean;
+    setSidebarOpen: (open: boolean) => void;
 };
 
 type SidebarProviderProps = {
-  children: React.ReactNode;
+    children: React.ReactNode;
 };
 
 const SidebarContext = createContext<SidebarContextType | undefined>(undefined);

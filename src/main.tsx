@@ -5,6 +5,7 @@ import { wagmiAdapter } from "./config";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WagmiProvider } from "wagmi";
 import { SidebarProvider } from "./contexts/SidebarContext";
+import { SearchQueryProvider } from "./contexts/SearchQueryContext";
 import "./index.css";
 import App from "./App.tsx";
 
@@ -13,11 +14,13 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
       <SidebarProvider>
-        <WagmiProvider config={wagmiAdapter.wagmiConfig}>
-          <QueryClientProvider client={queryClient}>
-            <App />
-          </QueryClientProvider>
-        </WagmiProvider>
+        <SearchQueryProvider>
+          <WagmiProvider config={wagmiAdapter.wagmiConfig}>
+            <QueryClientProvider client={queryClient}>
+              <App />
+            </QueryClientProvider>
+          </WagmiProvider>
+        </SearchQueryProvider>
       </SidebarProvider>
     </BrowserRouter>
   </StrictMode>

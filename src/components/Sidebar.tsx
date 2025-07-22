@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import Input from "./ui/Input";
 import { useSidebar } from "../contexts/SidebarContext";
+import { useSearchQuery } from "../contexts/SearchQueryContext";
 
 
 const blockchains = [
@@ -22,9 +23,18 @@ const collections = [
 ];
 const Sidebar = ({ isOpen }: { isOpen: boolean }) => {
     const {sidebarOpen, setSidebarOpen} = useSidebar();
+    const {searchQuery, setSearchQuery} = useSearchQuery();
     const navigate = useNavigate();
     const [collapsed, setCollapsed] = useState<string | null>(null);
-    const [value, setValue] = useState(0);
+    const [progressValue, setProgressValue] = useState(0);
+    const [hasNavigated, setHasNavigated] = useState(false);
+
+    const handleFocus = () => {
+        if (!hasNavigated) {
+            setHasNavigated(true);
+            navigate('/search');
+        }
+    };
 
     const SidebarContent = (
         <div className="py-6 px-4">
@@ -50,7 +60,11 @@ const Sidebar = ({ isOpen }: { isOpen: boolean }) => {
             <div className="space-y-4">
                 <div>
                     <h3 className="text-sm font-medium mb-2">Collections</h3>
-                    <Input type="search" placeholder="Search collection..." className="w-full" />
+                    <Input 
+                        type="search" 
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        onFocus={handleFocus} className="w-full" />
                 </div>
                 <div>
                     <h3 className="text-sm font-medium mb-2">Price Range</h3>
@@ -58,15 +72,15 @@ const Sidebar = ({ isOpen }: { isOpen: boolean }) => {
                         type="range"
                         min="0"
                         max="100"
-                        value={value}
-                        onChange={(e) => setValue(parseFloat(e.target.value))}
+                        value={progressValue}
+                        onChange={(e) => setProgressValue(parseFloat(e.target.value))}
                         className="w-full appearance-none h-2 rounded-full [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-3 [&::-webkit-slider-thumb]:border-black"
                         style={{
-                            background: `linear-gradient(to right, lightgray ${value}%, black ${value}%)`,
+                            background: `linear-gradient(to right, lightgray ${progressValue}%, black ${progressValue}%)`,
                         }}
                     />
                     <div className="flex items-center justify-between text-sm text-gray-500">
-                        <span>{value} ETH</span>
+                        <span>{progressValue} ETH</span>
                         <span>100+ ETH</span>
                     </div>
                 </div>

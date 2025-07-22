@@ -27,7 +27,7 @@ const AgentPanel = () => {
                                     <img
                                         src="https://placehold.co/600x400"
                                         alt=""
-                                        className="w-12 h-12 object-cover rounded-lg"
+                                        className="w-12 h-12 object-cover object-center rounded-lg"
                                     />
                                     <div className="flex-1 min-w-0">
                                         <h4 className="font-medium truncate">NFT 1</h4>
