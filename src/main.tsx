@@ -4,6 +4,7 @@ import { BrowserRouter } from "react-router-dom";
 import { wagmiAdapter } from "./config";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WagmiProvider } from "wagmi";
+import { SidebarProvider } from "./contexts/SidebarContext";
 import "./index.css";
 import App from "./App.tsx";
 
@@ -11,11 +12,13 @@ const queryClient = new QueryClient();
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
-      <WagmiProvider config={wagmiAdapter.wagmiConfig}>
-        <QueryClientProvider client={queryClient}>
-          <App />
-        </QueryClientProvider>
-      </WagmiProvider>
+      <SidebarProvider>
+        <WagmiProvider config={wagmiAdapter.wagmiConfig}>
+          <QueryClientProvider client={queryClient}>
+            <App />
+          </QueryClientProvider>
+        </WagmiProvider>
+      </SidebarProvider>
     </BrowserRouter>
   </StrictMode>
 );

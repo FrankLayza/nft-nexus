@@ -41,7 +41,7 @@ const AgentPanel = () => {
                                         // Simulate an API call
                                         setTimeout(() => {
                                             setIsAnalyzing(false);
-                                        }, 5000);
+                                        }, 10000);
                                     }}
                                     disabled={isAnalyzing} className="btn btn-neutral text-white w-full disabled:pointer-events-none">
                                     {isAnalyzing ? (

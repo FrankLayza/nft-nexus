@@ -76,7 +76,7 @@ const CardGrid = ({ className }: CardGridProps) => {
   return (
     <div className="flex-1">
       <div className="flex justify-between w-full items-center">
-        <div className="flex items-center space-x-4 flex-1">
+        <div className="xl:flex items-center space-x-4 flex-1">
           <h1 className="text-2xl font-bold">Explore NFTs</h1>
           <div className="badge badge-soft text-sm">
             {mockData.length} items
@@ -92,7 +92,7 @@ const CardGrid = ({ className }: CardGridProps) => {
             <option value="rarity-score">Rarity Score</option>
           </select>
 
-          <div className="flex items-center rounded border">
+          <div className="hidden xl:flex items-center rounded border">
             <Button
               className={`${
                 viewMode === "grid" ? "btn btn-neutral" : "btn btn-ghost"
