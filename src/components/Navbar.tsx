@@ -1,4 +1,5 @@
 import Button from "./Button";
+import { Link } from 'react-router-dom';
 
 const Navbar = () => {
   return (
@@ -6,7 +7,7 @@ const Navbar = () => {
       <header className="bg-white border-b border-gray-200 px-6 py-4">
         <div className="container mx-auto flex items-center justify-between">
           <div>
-            <h2 className="text-xl font-bold">NFT NEXUS</h2>
+            <Link className="text-xl font-bold" to="/">NFT NEXUS</Link>
           </div>
 
           <nav className="flex items-center space-x-5">

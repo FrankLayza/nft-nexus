@@ -1,6 +1,7 @@
-import { Filter, X } from "lucide-react";
+import { Filter, X, Activity, Target } from "lucide-react";
 import Button from "./ui/Button";
 import { useState } from "react";
+import { useNavigate } from 'react-router-dom';
 
 const blockchains = [
     { id: "ethereum", name: "Ethereum", icon: "⟠", count: 1234 },
@@ -17,11 +18,12 @@ const collections = [
     { id: "doodles", name: "Doodles", icon: "🎨", floor: 8.9 },
 ];
 const Sidebar = () => {
+    const navigate = useNavigate();
     const [collapsed, setCollapsed] = useState<string | null>(null);
     const [value, setValue] = useState(0);
     return (  
         <>
-            <aside className="w-80 bg-white border-r border-gray-200 h-[100vh] overflow-y-auto sticky top-0">
+            <aside className="hidden xl:block w-80 bg-white border-r border-gray-200 h-[100vh] overflow-y-auto sticky top-0">
                 <div className="py-6 px-4">
                     <div className="flex items-center justify-between mb-6">
                         <h2 className="text-lg font-semibold flex items-center">
@@ -166,6 +168,23 @@ const Sidebar = () => {
                                     </label>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                    <div onClick={() => navigate("/dyor")} className="w-full mt-6 flex flex-col items-center">
+                        <Button className="flex flex-col items-start h-fit p-4 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 transition-colors w-full cursor-pointer">
+                            <div className="flex items-center gap-2">
+                                <Target className="h-4 w-4 text-gray-500" />
+                                <span className="text-sm font-medium">NEXUS DYOR AI</span>
+                            </div>
+                        </Button>
+                    </div>
+                    <div className="w-full mt-6 flex flex-col items-center">
+                        <div className="flex flex-col items-start h-fit p-4 rounded bg-gray-100 w-full cursor-default">
+                            <div className="flex items-center gap-2">
+                                <Activity className="h-4 w-4 text-green-500" />
+                                <span className="text-sm font-medium">System Status</span>
+                            </div>
+                            <p className="text-xs text-muted-foreground">All systems operational</p>
                         </div>
                     </div>
                 </div>

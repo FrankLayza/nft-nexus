@@ -1,7 +1,6 @@
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
-import CardGrid from "../components/CardGrid";
-import UtilityPanel from "../components/RightPanel";
+import { Outlet } from 'react-router-dom';
 
 const Home = () => {
   return (
@@ -11,9 +10,8 @@ const Home = () => {
       <div className="flex-grow">
         <main className="container min-h-screen mx-auto flex flex-row">
           <Sidebar />
-          <div className="flex flex-row flex-1 p-6 gap-6">
-            <CardGrid />
-            <UtilityPanel />
+          <div className="flex-1 p-6">
+            <Outlet />
           </div>
         </main>
       </div>
