@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Grid, List } from "lucide-react";
 import { fetchNftCollection } from "../utils/fetchNFT";
 import { useQuery } from "@tanstack/react-query";
+import { useFilter } from "../contexts/FilterContext";
 import Button from "./ui/Button";
 import Card from "./ui/Card";
 type CardGridProps = {
@@ -11,66 +12,67 @@ type CardGridProps = {
 
 
 
-const mockData = [
-  {
-    title: "NFT 1",
-    description: "NFT 1 Description",
-    image: "https://placehold.co/600x400",
-    price: "price",
-    AIEstimate: "AI est.",
-    priceValue: "0.7",
-    AIEstimateValue: "2.3",
-  },
-  {
-    title: "NFT 2",
-    description: "NFT 2 Description",
-    image: "https://placehold.co/600x400",
-    price: "price",
-    AIEstimate: "AI est.",
-    priceValue: "0.7",
-    AIEstimateValue: "2.3",
-  },
-  {
-    title: "NFT 3",
-    description: "NFT 3 Description",
-    image: "https://placehold.co/600x400",
-    price: "price",
-    AIEstimate: "AI est.",
-    priceValue: "0.7",
-    AIEstimateValue: "2.3",
-  },
-  {
-    title: "NFT 4",
-    description: "NFT 4 Description",
-    image: "https://placehold.co/600x400",
-    price: "price",
-    AIEstimate: "AI est.",
-    priceValue: "0.7",
-    AIEstimateValue: "2.3",
-  },
-  {
-    title: "NFT 5",
-    description: "NFT 5 Description",
-    image: "https://placehold.co/600x400",
-    price: "price",
-    AIEstimate: "AI est.",
-    priceValue: "0.7",
-    AIEstimateValue: "2.3",
-  },
-  {
-    title: "NFT 6",
-    description: "NFT 6 Description",
-    image: "https://placehold.co/600x400",
-    price: "price",
-    AIEstimate: "AI est.",
-    priceValue: "0.7",
-    AIEstimateValue: "2.3",
-  },
-];
+// const mockData = [
+//   {
+//     title: "NFT 1",
+//     description: "NFT 1 Description",
+//     image: "https://placehold.co/600x400",
+//     price: "price",
+//     AIEstimate: "AI est.",
+//     priceValue: "0.7",
+//     AIEstimateValue: "2.3",
+//   },
+//   {
+//     title: "NFT 2",
+//     description: "NFT 2 Description",
+//     image: "https://placehold.co/600x400",
+//     price: "price",
+//     AIEstimate: "AI est.",
+//     priceValue: "0.7",
+//     AIEstimateValue: "2.3",
+//   },
+//   {
+//     title: "NFT 3",
+//     description: "NFT 3 Description",
+//     image: "https://placehold.co/600x400",
+//     price: "price",
+//     AIEstimate: "AI est.",
+//     priceValue: "0.7",
+//     AIEstimateValue: "2.3",
+//   },
+//   {
+//     title: "NFT 4",
+//     description: "NFT 4 Description",
+//     image: "https://placehold.co/600x400",
+//     price: "price",
+//     AIEstimate: "AI est.",
+//     priceValue: "0.7",
+//     AIEstimateValue: "2.3",
+//   },
+//   {
+//     title: "NFT 5",
+//     description: "NFT 5 Description",
+//     image: "https://placehold.co/600x400",
+//     price: "price",
+//     AIEstimate: "AI est.",
+//     priceValue: "0.7",
+//     AIEstimateValue: "2.3",
+//   },
+//   {
+//     title: "NFT 6",
+//     description: "NFT 6 Description",
+//     image: "https://placehold.co/600x400",
+//     price: "price",
+//     AIEstimate: "AI est.",
+//     priceValue: "0.7",
+//     AIEstimateValue: "2.3",
+//   },
+// ];
 const CardGrid = ({ className }: CardGridProps) => {
+  const {selectedCollection, selectedSlug} = useFilter()
   const { data, error, isLoading } = useQuery({
-    queryKey: ["nft-collection"],
-    queryFn: fetchNftCollection,
+    queryKey: ["nft-collection", selectedCollection],
+    queryFn: () => fetchNftCollection(selectedSlug),
   });
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   return (
@@ -79,7 +81,7 @@ const CardGrid = ({ className }: CardGridProps) => {
         <div className="xl:flex items-center space-x-4 flex-1">
           <h1 className="text-2xl font-bold">Explore NFTs</h1>
           <div className="badge badge-soft text-sm">
-            {mockData.length} items
+            {data?.length} items
           </div>
         </div>
         <div className="flex items-center gap-3">

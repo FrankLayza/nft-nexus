@@ -12,8 +12,8 @@ export interface Nft {
     image_url: string
 }
 
-export const fetchNftCollection = async(): Promise<Nft[]> => {
-    const res = await fetch ('https://api.opensea.io/api/v2/collection/pudgypenguins/nfts?limit=18', options)
+export const fetchNftCollection = async(collection: string): Promise<Nft[]> => {
+    const res = await fetch (`https://api.opensea.io/api/v2/collection/${collection}/nfts?limit=18`, options)
 
     if(!res.ok){
         throw new Error('error fetching nfts')
