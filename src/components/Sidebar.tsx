@@ -22,6 +22,7 @@ const Sidebar = ({ isOpen }: { isOpen: boolean }) => {
     selectedCollection,
     updateSelectedChain,
     updateSelectedCollection,
+    resetFilter,
   } = useFilter();
   const { sidebarOpen, setSidebarOpen } = useSidebar();
   const { searchQuery, setSearchQuery } = useSearchQuery();
@@ -44,7 +45,7 @@ const Sidebar = ({ isOpen }: { isOpen: boolean }) => {
           <Filter className="w-5 h-5 mr-2" />
           Filters
         </h2>
-        <Button className="btn-ghost text-gray-500 hover:text-gray-700 active:text-gray-800">
+        <Button onClick={() => resetFilter()} className="btn-ghost text-gray-500 hover:text-gray-700 active:text-gray-800">
           Clear all
         </Button>
       </div>
@@ -87,7 +88,9 @@ const Sidebar = ({ isOpen }: { isOpen: boolean }) => {
         >
           <div
             className="collapse-title font-medium text-sm text-gray-600"
-            onClick={() => setCollapsed("blockchain")}
+              onClick={() =>
+                setCollapsed(collapsed === "blockchain" ? null : "blockchain")
+              }
           >
             Blockchain
           </div>
@@ -135,7 +138,10 @@ const Sidebar = ({ isOpen }: { isOpen: boolean }) => {
         >
           <div
             className="collapse-title font-medium text-sm text-gray-600"
-            onClick={() => setCollapsed("collection")}
+            onClick={() =>
+              setCollapsed(collapsed === "collection" ? null : "collection")
+            }
+            
           >
             Collections
           </div>

@@ -6,75 +6,33 @@ import { useQuery } from "@tanstack/react-query";
 import { useFilter } from "../contexts/FilterContext";
 import Button from "./ui/Button";
 import Card from "./ui/Card";
+import SkeletonLoader from "./ui/SkeletonLoader";
+import { useEffect } from "react";
+
 type CardGridProps = {
   className?: string;
 };
 
-
-
-// const mockData = [
-//   {
-//     title: "NFT 1",
-//     description: "NFT 1 Description",
-//     image: "https://placehold.co/600x400",
-//     price: "price",
-//     AIEstimate: "AI est.",
-//     priceValue: "0.7",
-//     AIEstimateValue: "2.3",
-//   },
-//   {
-//     title: "NFT 2",
-//     description: "NFT 2 Description",
-//     image: "https://placehold.co/600x400",
-//     price: "price",
-//     AIEstimate: "AI est.",
-//     priceValue: "0.7",
-//     AIEstimateValue: "2.3",
-//   },
-//   {
-//     title: "NFT 3",
-//     description: "NFT 3 Description",
-//     image: "https://placehold.co/600x400",
-//     price: "price",
-//     AIEstimate: "AI est.",
-//     priceValue: "0.7",
-//     AIEstimateValue: "2.3",
-//   },
-//   {
-//     title: "NFT 4",
-//     description: "NFT 4 Description",
-//     image: "https://placehold.co/600x400",
-//     price: "price",
-//     AIEstimate: "AI est.",
-//     priceValue: "0.7",
-//     AIEstimateValue: "2.3",
-//   },
-//   {
-//     title: "NFT 5",
-//     description: "NFT 5 Description",
-//     image: "https://placehold.co/600x400",
-//     price: "price",
-//     AIEstimate: "AI est.",
-//     priceValue: "0.7",
-//     AIEstimateValue: "2.3",
-//   },
-//   {
-//     title: "NFT 6",
-//     description: "NFT 6 Description",
-//     image: "https://placehold.co/600x400",
-//     price: "price",
-//     AIEstimate: "AI est.",
-//     priceValue: "0.7",
-//     AIEstimateValue: "2.3",
-//   },
-// ];
 const CardGrid = ({ className }: CardGridProps) => {
-  const {selectedCollection, selectedSlug} = useFilter()
-  const { data, error, isLoading } = useQuery({
-    queryKey: ["nft-collection", selectedCollection],
-    queryFn: () => fetchNftCollection(selectedSlug),
-  });
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [isSearching, setIsSearching] = useState(false);
+
+  
+  const {selectedCollection, selectedSlug} = useFilter();
+  const { data, error, isLoading } = useQuery({
+      queryKey: ["nft-collection", selectedCollection],
+      queryFn: () => fetchNftCollection(selectedSlug),
+  });
+  useEffect(() => {
+    if (isLoading) {
+        setIsSearching(true);
+    } else {
+        setIsSearching(false);
+    }
+    if (error) {
+        console.error("Error fetching NFT collection:", error);
+    }
+  }, [isLoading, error, data]);
   return (
     <div className="flex-1">
       <div className="flex justify-between w-full items-center">
@@ -116,30 +74,23 @@ const CardGrid = ({ className }: CardGridProps) => {
       <div
         className={`${className} grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 py-3`}
       >
-        {/* {mockData.map((card, id) => (
-          <div key={id}>
-            <Card
-              image={card.image}
-              title={card.title}
-              description={card.description}
-              AIEstimate={card.AIEstimate}
-              AIEstimateValue={card.AIEstimateValue}
-              price={card.price}
-              priceValue={card.priceValue}
-            />
-          </div>
-        ))} */}
-
-        {data?.map((nft) => (
-          <div key={nft.identifier}>
-            <Card 
-              image={nft.image_url}
-              title={nft.name}
-              description={nft.description}
-              
-            />
-          </div>
-        ))}
+        {
+          isSearching ? (
+              [...Array(6)].map((_, index) => (
+                <SkeletonLoader key={index} isSearching={true} />
+              ))
+          ) : (
+            data?.map((nft) => (
+              <div key={nft.identifier}>
+                <Card 
+                  image={nft.image_url}
+                  title={nft.name}
+                  description={nft.description}
+                />
+              </div>
+            ))
+          )
+        }  
       </div>
     </div>
   );
