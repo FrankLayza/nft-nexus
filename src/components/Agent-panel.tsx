@@ -11,7 +11,7 @@ const AgentPanel = () => {
     const [agentInsights, setAgentInsights] = useState<"BUY" | "SELL" | null>("BUY");
     
     return (  
-        <div className="h-fit w-56 rounded-lg border border-gray-300 bg-white">
+        <div className="h-fit rounded-lg border border-gray-300 bg-white">
             <div className="flex flex-col py-6 px-4 pb-3 items-center">
                 <div className="flex items-center gap-2 text-lg">
                     <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">

@@ -5,63 +5,52 @@ import { Search, ArrowUpRight } from "lucide-react";
 import { useState, useEffect } from "react";
 import UtilityPanel from "./RightPanel";
 import { useSearchQuery } from "../contexts/SearchQueryContext";
+import { useQuery } from "@tanstack/react-query";
+import { fetchNftCollection } from "../utils/fetchNFT";
+import { collectionsByChain, collectionSlugs } from "../contexts/FilterContext";
+import type { Chain } from "../contexts/FilterContext";
 
 
-const mockNFTs = [
-    {
-      name: "Bored Ape Yacht Club",
-      symbol: "BAYC",
-      floorPrice: "12.5 ETH",
-      volume24h: "1,247 ETH",
-      change24h: "+5.2%",
-      holders: "5,891",
-      totalSupply: "10,000",
-      description:
-        "A collection of 10,000 unique Bored Ape NFTs— unique digital collectibles living on the Ethereum blockchain.",
-      verified: true,
-      image: "https://placehold.co/600x400",
-    },
-    {
-      name: "CryptoPunks",
-      symbol: "PUNKS",
-      floorPrice: "45.2 ETH",
-      volume24h: "892 ETH",
-      change24h: "+2.1%",
-      holders: "3,711",
-      totalSupply: "10,000",
-      description: "10,000 unique collectible characters with proof of ownership stored on the Ethereum blockchain.",
-      verified: true,
-      image: "https://placehold.co/600x400",
-    },
-    {
-      name: "Azuki",
-      symbol: "AZUKI",
-      floorPrice: "3.8 ETH",
-      volume24h: "654 ETH",
-      change24h: "-1.5%",
-      holders: "4,234",
-      totalSupply: "10,000",
-      description: "A brand for the metaverse. Take the red bean to join the garden.",
-      verified: true,
-      image: "https://placehold.co/600x400",
-    },
-];
+
 
 const SearchPage = () => {
     const {searchQuery, setSearchQuery} = useSearchQuery();
     const [isSearching, setIsSearching] = useState<boolean>(false);
 
+
+    // Flatten the collectionsByChain object to a list of collections with slugs
+    const allCollections = Object.entries(collectionsByChain as Record<Chain, string[]>).flatMap(([chain, names]) =>
+        names.map((name) => ({
+            name,
+            slug: collectionSlugs[name],
+            chain: chain as Chain,
+        }))
+    );
+
+    // Find the collection that matches the query
+    const matchedCollection = searchQuery.trim().length > 0 ? allCollections.find((c) =>
+        c.name.toLowerCase().includes(searchQuery.toLowerCase())
+    ): undefined;
+
+    const { data, error, isLoading } = useQuery({
+        queryKey: ["nfts-collection-search", matchedCollection?.slug],
+        queryFn: () => matchedCollection?.slug ? fetchNftCollection(matchedCollection.slug) : Promise.resolve(null),
+        enabled: !!matchedCollection?.slug,
+    });
+    // console.log("matchedCollection", matchedCollection);
     useEffect(() => {
-        if (!searchQuery) return;
-
-        setIsSearching(true);
-        const timeout = setTimeout(() => {
+        if (isLoading) {
+            setIsSearching(true);
+        } else {
             setIsSearching(false);
-        }, 5000);
+        }
 
-        return () => clearTimeout(timeout);
-    }, [searchQuery]);
-
+        if (error) {
+            console.error("Error fetching NFT collection:", error);
+        }
+        // console.log("data", data, "error", error, "isLoading", isLoading);
+    }, [isLoading, error, data]);
+        
     return (
         <div className="flex flex-row gap-6">
             <div className="space-y-6 flex-1">
@@ -84,13 +73,6 @@ const SearchPage = () => {
                             />
                             <Button 
                                 disabled={isSearching}
-                                onClick={async () => {
-                                    setIsSearching(true);
-                                    // Simulate an API call
-                                    setTimeout(() => {
-                                        setIsSearching(false);
-                                    }, 5000);
-                                }}
                                 className="btn-neutral">
                                 {
                                     isSearching ? (
@@ -107,7 +89,7 @@ const SearchPage = () => {
                         <div className="space-y-4 mt-6">
                             <div className="flex items-center justify-between">
                                 <h3 className="text-lg font-semibold">
-                                    Search Results {mockNFTs.length}
+                                    Search Results {data !== undefined && data !== null ? data.length : null}
                                 </h3>
                                 {searchQuery && (
                                     <Button onClick={() => {setSearchQuery("")}}>
@@ -128,16 +110,16 @@ const SearchPage = () => {
                                     </div>
                                 ))}
                                 </div>
-                            ) : mockNFTs.length > 0 ? (
+                            ) : data !== undefined && data !== null && data.length > 0 ? (
                                 <div className="space-y-3 max-h-96 overflow-y-auto">
-                                    {mockNFTs.map((collection, index) => (
+                                    {data.map((collection) => (
                                         <div
-                                        key={index}
+                                        key={collection.identifier}
                                         className="flex flex-col lg:flex-row items-center space-x-4 p-4 border border-gray-300 rounded-lg cursor-pointer"
                                         >
-                                        <div className="w-15 h-15 overflow-hidden rounded-lg">
+                                        <div className="w-1/2 h-40 lg:w-15 lg:h-15 overflow-hidden rounded-lg">
                                             <img
-                                                src={collection.image}
+                                                src={collection.image_url}
                                                 alt={collection.name}
                                                 className="w-full h-full object-cover object-center"
                                             />
@@ -145,33 +127,34 @@ const SearchPage = () => {
                                         <div className="flex-1">
                                             <div className="flex justify-between w-full lg:justify-start mt-4 lg:mt-0 items-center gap-2 lg:mb-1 mb-2">
                                                 <h4 className="font-semibold truncate">{collection.name}</h4>
-                                                {collection.verified && (
-                                                    <Badge className="text-xs">
-                                                        ✓ Verified
-                                                    </Badge>
-                                                )}
+                                                <Badge className="text-xs">
+                                                    ✓ Verified
+                                                </Badge>
                                             </div>
                                             <p className="text-sm text-gray-500 mb-2 line-clamp-2">{collection.description}</p>
                                             <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
                                                 <div>
                                                     <span className="text-gray-500">Floor:</span>
-                                                    <div className="font-medium">{collection.floorPrice}</div>
+                                                    <div className="font-medium">3.8 ETH</div>
                                                 </div>
                                                 <div>
                                                     <span className="text-gray-500">24h Vol:</span>
-                                                    <div className="font-medium">{collection.volume24h}</div>
+                                                    <div className="font-medium">654 ETH</div>
                                                 </div>
                                                 <div>
                                                     <span className="text-gray-500">Change:</span>
-                                                    <div
+                                                    {/* <div
                                                     className={`font-medium ${collection.change24h.startsWith("+") ? "text-green-600" : "text-red-600"}`}
+                                                    > */}
+                                                    <div
+                                                    className={`font-medium text-green-600`}
                                                     >
-                                                    {collection.change24h}
+                                                    +1.5%
                                                     </div>
                                                 </div>
                                                 <div>
                                                     <span className="text-gray-500">Holders:</span>
-                                                    <div className="font-medium">{collection.holders}</div>
+                                                    <div className="font-medium">4,234</div>
                                                 </div>
                                             </div>
                                         </div>

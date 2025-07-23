@@ -16,7 +16,7 @@ export type CollectionSlugMap = {
 
 const DefaultChain: Chain = "Ethereum";
 
-const collectionSlugs: CollectionSlugMap = {
+export const collectionSlugs: CollectionSlugMap = {
   "Bored Ape Yacht Club": "boredapeyachtclub",
   "Pudgy Penguins": "pudgypenguins",
   "CryptoPunks": "cryptopunks",
@@ -40,7 +40,7 @@ const collectionSlugs: CollectionSlugMap = {
 };
 
 
-const collectionsByChain: CollectionsByChain = {
+export const collectionsByChain: CollectionsByChain = {
   Ethereum: [
     "Bored Ape Yacht Club",
     "Pudgy Penguins",

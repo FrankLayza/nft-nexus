@@ -130,47 +130,6 @@ const Sidebar = ({ isOpen }: { isOpen: boolean }) => {
         <div
           tabIndex={0}
           className={`collapse collapse-arrow ${
-            collapsed === "availability" ? "collapse-open" : "collapse-close"
-          } border border-gray-200 bg-transparent rounded-md w-full`}
-        >
-          <div
-            className="collapse-title font-medium text-sm text-gray-600"
-            onClick={() =>
-              setCollapsed(collapsed === "availability" ? null : "availability")
-            }
-          >
-            Availability
-          </div>
-          <div className="collapse-content">
-            <div className="flex items-center space-x-3 mb-2">
-              <input type="checkbox" id="all" defaultChecked />
-              <label htmlFor="all" className="text-sm cursor-pointer">
-                All
-              </label>
-            </div>
-            <div className="flex items-center space-x-3 mb-2">
-              <input type="checkbox" id="on-sale" />
-              <label htmlFor="on-sale" className="text-sm cursor-pointer">
-                On Sale
-              </label>
-            </div>
-            <div className="flex items-center space-x-3 mb-2">
-              <input type="checkbox" id="auction" />
-              <label htmlFor="auction" className="text-sm cursor-pointer">
-                Auction
-              </label>
-            </div>
-            <div className="flex items-center space-x-3">
-              <input type="checkbox" id="new-listing" />
-              <label htmlFor="new-listing" className="text-sm cursor-pointer">
-                New Listings
-              </label>
-            </div>
-          </div>
-        </div>
-        <div
-          tabIndex={0}
-          className={`collapse collapse-arrow ${
             collapsed === "collection" ? "collapse-open" : "collapse-close"
           } border border-gray-200 bg-transparent rounded-md w-full`}
         >
