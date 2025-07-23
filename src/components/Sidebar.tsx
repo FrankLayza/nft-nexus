@@ -48,16 +48,6 @@ const Sidebar = ({ isOpen }: { isOpen: boolean }) => {
           Clear all
         </Button>
       </div>
-      <div className="flex flex-wrap gap-2 mb-6">
-        <div className="inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold bg-gray-100">
-          All Chains
-          <X className="w-3 h-3 cursor-pointer hover:text-blue-700 focus:text-green-700 active:text-red-700" />
-        </div>
-        <div className="inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold bg-gray-100">
-          On Sale
-          <X className="w-3 h-3 cursor-pointer hover:text-blue-700 focus:text-green-700 active:text-red-700" />
-        </div>
-      </div>
       <div className="space-y-4">
         <div>
           <h3 className="text-sm font-medium mb-2">Collections</h3>
