@@ -100,7 +100,7 @@ const SearchPage = () => {
 
                             {isSearching ? (
                                 <div className="space-y-3">
-                                {Array.from({ length: 3 }).map((_, i) => (
+                                {[...Array(6)].map((_, i) => (
                                     <div key={i} className="flex items-center space-x-4 p-4 border border-gray-300 rounded-lg">
                                         <div className="w-12 h-12 bg-gray-300 rounded-lg animate-pulse"></div>
                                         <div className="flex-1 space-y-2">
