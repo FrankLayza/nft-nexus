@@ -17,6 +17,7 @@ const Card = ({
   priceValue,
   AIEstimateValue,
 }: CardProps) => {
+
   return (
     <div className="card bg-base-100 border border-gray-200 cursor-pointer transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5">
       <figure>
@@ -25,7 +26,7 @@ const Card = ({
       <div className="px-4 py-2">
         <div> 
           <h2 className="font-bold">{title}</h2>
-          <p className="text-sm">{description}</p>
+          <p className="text-sm">{description.length < 100 ? description: '...'}</p>
         </div>
         <div className="py-2">
             <div className="flex justify-between items-center text-xs text-gray-500 capitalize">

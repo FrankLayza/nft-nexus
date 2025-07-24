@@ -18,7 +18,7 @@ const CardGrid = ({ className }: CardGridProps) => {
   const [isSearching, setIsSearching] = useState(false);
 
   
-  const {selectedCollection, selectedSlug} = useFilter();
+  const {selectedCollection, selectedSlug, setSelectedNFT} = useFilter();
   const { data, error, isLoading } = useQuery({
       queryKey: ["nft-collection", selectedCollection],
       queryFn: () => fetchNftCollection(selectedSlug),
@@ -81,7 +81,7 @@ const CardGrid = ({ className }: CardGridProps) => {
               ))
           ) : (
             data?.map((nft) => (
-              <div key={nft.identifier}>
+              <div key={nft.identifier} onClick={() => setSelectedNFT(nft)}>
                 <Card 
                   image={nft.image_url}
                   title={nft.name}

@@ -4,9 +4,10 @@ import Button from "./ui/Button";
 import Badge from "./ui/Badge";
 import Separator from "./ui/Separator";
 import Progress from "./ui/Progress";
+import { useFilter } from "../contexts/FilterContext";
 
 const AgentPanel = () => {
-    const [selectedNFT, setSelectedNFT] = useState<boolean>(true);
+    const {selectedNFT} = useFilter();
     const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false);
     const [agentInsights, setAgentInsights] = useState<"BUY" | "SELL" | null>("BUY");
     
@@ -25,12 +26,12 @@ const AgentPanel = () => {
                             <div className="py-4 w-full space-y-4">
                                 <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                                     <img
-                                        src="https://placehold.co/600x400"
+                                        src={selectedNFT.image_url}
                                         alt=""
                                         className="w-12 h-12 object-cover object-center rounded-lg"
                                     />
                                     <div className="flex-1 min-w-0">
-                                        <h4 className="font-medium truncate">NFT 1</h4>
+                                        <h4 className="font-medium truncate">{selectedNFT.name}</h4>
                                         <p className="text-sm text-gray-600">Pi Punks</p>
                                     </div>
                                 </div>
