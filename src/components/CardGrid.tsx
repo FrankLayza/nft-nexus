@@ -1,45 +1,76 @@
-// import Card from "./Card";
 import { useState } from "react";
-import { Grid, List } from "lucide-react";
 import { fetchNftCollection } from "../utils/fetchNFT";
 import { useQuery } from "@tanstack/react-query";
 import { useFilter } from "../contexts/FilterContext";
-import Button from "./ui/Button";
 import Card from "./ui/Card";
 import SkeletonLoader from "./ui/SkeletonLoader";
 import { useEffect } from "react";
+import type { Nft } from "../utils/fetchNFT";
 
 type CardGridProps = {
   className?: string;
 };
 
 const CardGrid = ({ className }: CardGridProps) => {
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [isSearching, setIsSearching] = useState(false);
 
-  
-  const {selectedCollection, selectedSlug, setSelectedNFT} = useFilter();
-  const { data, error, isLoading } = useQuery({
-      queryKey: ["nft-collection", selectedCollection],
-      queryFn: () => fetchNftCollection(selectedSlug),
+  const { selectedAddress, selectedChain, setSelectedNFT } = useFilter();
+
+  console.log(
+    "CardGrid - selectedAddress:",
+    selectedAddress,
+    "selectedChain:",
+    selectedChain
+  );
+
+  const { data, error, isLoading, refetch } = useQuery<Nft[]>({
+    queryKey: ["nft-collection", selectedAddress, selectedChain],
+    queryFn: () => fetchNftCollection(selectedAddress, selectedChain),
+    enabled: !!selectedAddress && !!selectedChain,
+    refetchOnWindowFocus: false,
+    staleTime: 0,
+    gcTime: 0,
   });
+
+  console.log(
+    "CardGrid - data:",
+    data,
+    "error:",
+    error,
+    "isLoading:",
+    isLoading
+  );
+
   useEffect(() => {
     if (isLoading) {
-        setIsSearching(true);
+      setIsSearching(true);
     } else {
-        setIsSearching(false);
+      setIsSearching(false);
     }
     if (error) {
-        console.error("Error fetching NFT collection:", error);
+      console.error("Error fetching NFT collection:", error);
     }
   }, [isLoading, error, data]);
+
+  // Force refetch when address or chain changes
+  useEffect(() => {
+    if (selectedAddress && selectedChain) {
+      console.log(
+        "CardGrid - Triggering refetch for:",
+        selectedAddress,
+        selectedChain
+      );
+      refetch();
+    }
+  }, [selectedAddress, selectedChain, refetch]);
+
   return (
     <div className="flex-1">
       <div className="flex justify-between w-full items-center">
         <div className="xl:flex items-center space-x-4 flex-1">
           <h1 className="text-2xl font-bold">Explore NFTs</h1>
           <div className="badge badge-soft text-sm">
-            {data?.length} items
+            {data?.length || 0} items
           </div>
         </div>
         <div className="flex items-center gap-3">
@@ -51,46 +82,29 @@ const CardGrid = ({ className }: CardGridProps) => {
             <option value="most-viewed">Most Viewed</option>
             <option value="rarity-score">Rarity Score</option>
           </select>
-
-          <div className="hidden xl:flex items-center rounded border">
-            <Button
-              className={`${
-                viewMode === "grid" ? "btn btn-neutral" : "btn btn-ghost"
-              } rounded-none`}
-            >
-              <Grid className="w-4 h-4" />
-            </Button>
-            <Button
-              className={`${
-                viewMode === "list" ? "btn btn-neutral" : "btn btn-ghost"
-              } rounded-none`}
-            >
-              <List className="w-4 h-4" />
-            </Button>
-          </div>
         </div>
       </div>
 
       <div
         className={`${className} grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 py-3`}
       >
-        {
-          isSearching ? (
-              [...Array(6)].map((_, index) => (
-                <SkeletonLoader key={index} isSearching={true} />
-              ))
-          ) : (
-            data?.map((nft) => (
+        {isSearching
+          ? [...Array(6)].map((_, index) => (
+              <SkeletonLoader key={index} isSearching={true} />
+            ))
+          : data?.map((nft: Nft) => (
               <div key={nft.identifier} onClick={() => setSelectedNFT(nft)}>
-                <Card 
-                  image={nft.image_url}
-                  title={nft.name}
-                  description={nft.description}
+                <Card
+                  image={nft?.image}
+                  title={nft?.name}
+                  description={nft?.description}
+                  price="Price"
+                  AIEstimate="AI Estimate"
+                  priceValue={nft?.price ? `$${nft.price.toFixed(2)}` : "--"}
+                  AIEstimateValue="--"
                 />
               </div>
-            ))
-          )
-        }  
+            ))}
       </div>
     </div>
   );

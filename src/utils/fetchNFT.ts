@@ -1,23 +1,83 @@
-const OPENSEA_NFT = import.meta.env.VITE_GET_NFT_OPENSEA
+// const OPENSEA_NFT = import.meta.env.VITE_GET_NFT_OPENSEA
+const ALCHEMY_API_KEY = import.meta.env.VITE_GET_ALCHEMY;
+
+const ALCHEMY_BASE_URLS: Record<string, string> = {
+  ethereum: "https://eth-mainnet.g.alchemy.com/nft/v3",
+  polygon: "https://polygon-mainnet.g.alchemy.com/nft/v3",
+  avalanche: "https://avax-mainnet.g.alchemy.com/nft/v3",
+  arbitrum: "https://arb-mainnet.g.alchemy.com/nft/v3",
+};
 
 const options = {
-    method: 'GET',
-    headers: {accept: 'application/json', 'x-api-key': OPENSEA_NFT }
-}
+  method: "GET",
+};
 
 export interface Nft {
-    identifier: string | number,
-    name: string,
-    description: string,
-    image_url: string
+  identifier: string | number;
+  name: string;
+  description: string;
+  image: string;
+  price?: number;
 }
 
-export const fetchNftCollection = async(collection: string): Promise<Nft[]> => {
-    const res = await fetch (`https://api.opensea.io/api/v2/collection/${collection}/nfts?limit=18`, options)
-
-    if(!res.ok){
-        throw new Error('error fetching nfts')
-    }
-    const data = await res.json()
-    return data.nfts
+interface AlchemyNftResponse {
+  tokenId: string;
+  name: string | null;
+  description: string | null;
+  image: {
+    cachedUrl: string;
+    originalUrl: string;
+  };
+  contract: {
+    name: string;
+    openSeaMetadata?: {
+      floorPrice?: number;
+    };
+  };
 }
+
+export type SupportedChain = "ethereum" | "polygon" | "avalanche" | "arbitrum";
+
+export const fetchNftCollection = async (
+  contractAddress: string,
+  chain: SupportedChain
+): Promise<Nft[]> => {
+  if (!ALCHEMY_API_KEY) {
+    throw new Error("Alchemy API key is not set!");
+  }
+  const baseUrl = ALCHEMY_BASE_URLS[chain];
+  if (!baseUrl) {
+    throw new Error(`Alchemy base URL is not set for chain: ${chain}`);
+  }
+  const url = `${baseUrl}/${ALCHEMY_API_KEY}/getNFTsForContract?contractAddress=${contractAddress}&withMetadata=true&pageSize=18`;
+  console.log("fetchNftCollection - URL:", url);
+
+  const res = await fetch(url, options);
+
+  if (!res.ok) {
+    console.error(
+      "fetchNftCollection - Response not ok:",
+      res.status,
+      res.statusText
+    );
+    throw new Error("error fetching nfts");
+  }
+  const data = await res.json();
+  console.log("fetchNftCollection - Raw data:", data);
+
+  // Map Alchemy API response to our Nft interface
+  const mappedNfts = data.nfts.map((nft: AlchemyNftResponse) => ({
+    identifier: nft.tokenId,
+    name: nft.name || `#${nft.tokenId}`,
+    description:
+      nft.description || nft.contract.name || "No description available",
+    image:
+      nft.image?.cachedUrl ||
+      nft.image?.originalUrl ||
+      "https://via.placeholder.com/300x300?text=No+Image",
+    price: nft.contract?.openSeaMetadata?.floorPrice,
+  }));
+
+  console.log("fetchNftCollection - Mapped NFTs:", mappedNfts);
+  return mappedNfts;
+};

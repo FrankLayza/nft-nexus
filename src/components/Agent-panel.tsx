@@ -26,7 +26,7 @@ const AgentPanel = () => {
                             <div className="py-4 w-full space-y-4">
                                 <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                                     <img
-                                        src={selectedNFT.image_url}
+                                        src={selectedNFT.image}
                                         alt=""
                                         className="w-12 h-12 object-cover object-center rounded-lg"
                                     />

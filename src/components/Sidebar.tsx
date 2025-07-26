@@ -31,6 +31,19 @@ const Sidebar = ({ isOpen }: { isOpen: boolean }) => {
   const [progressValue, setProgressValue] = useState(0);
   const [hasNavigated, setHasNavigated] = useState(false);
 
+  // Convert selectedChain (lowercase) to display format (capitalized)
+  const getDisplayChain = (chain: string): Chain => {
+    const chainMap: Record<string, Chain> = {
+      ethereum: "Ethereum",
+      polygon: "Polygon",
+      avalanche: "Avalanche",
+      arbitrum: "Arbitrum",
+    };
+    return chainMap[chain] || "Ethereum";
+  };
+
+  const displaySelectedChain = getDisplayChain(selectedChain);
+
   const handleFocus = () => {
     if (!hasNavigated) {
       setHasNavigated(true);
@@ -45,7 +58,10 @@ const Sidebar = ({ isOpen }: { isOpen: boolean }) => {
           <Filter className="w-5 h-5 mr-2" />
           Filters
         </h2>
-        <Button onClick={() => resetFilter()} className="btn-ghost text-gray-500 hover:text-gray-700 active:text-gray-800">
+        <Button
+          onClick={() => resetFilter()}
+          className="btn-ghost text-gray-500 hover:text-gray-700 active:text-gray-800"
+        >
           Clear all
         </Button>
       </div>
@@ -88,9 +104,9 @@ const Sidebar = ({ isOpen }: { isOpen: boolean }) => {
         >
           <div
             className="collapse-title font-medium text-sm text-gray-600"
-              onClick={() =>
-                setCollapsed(collapsed === "blockchain" ? null : "blockchain")
-              }
+            onClick={() =>
+              setCollapsed(collapsed === "blockchain" ? null : "blockchain")
+            }
           >
             Blockchain
           </div>
@@ -107,12 +123,12 @@ const Sidebar = ({ isOpen }: { isOpen: boolean }) => {
                     id={`radio-${blockchain.name}`}
                     className={`appearance-none w-4 h-4 rounded-full border border-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors duration-150
                          ${
-                           selectedChain === blockchain.name
+                           displaySelectedChain === blockchain.name
                              ? "bg-blue-500 border-blue-500 ring-1 ring-blue-300"
                              : ""
                          }
                         `}
-                    checked={selectedChain === blockchain.name}
+                    checked={displaySelectedChain === blockchain.name}
                     onChange={() => {
                       updateSelectedChain(blockchain.name);
                       setCollapsed("blockchain");
@@ -141,7 +157,6 @@ const Sidebar = ({ isOpen }: { isOpen: boolean }) => {
             onClick={() =>
               setCollapsed(collapsed === "collection" ? null : "collection")
             }
-            
           >
             Collections
           </div>

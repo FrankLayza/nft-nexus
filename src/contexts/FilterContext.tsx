@@ -1,47 +1,105 @@
-import { createContext, useContext, useState, type Dispatch, type ReactNode, type SetStateAction } from "react";
-import type { Nft } from "../utils/fetchNFT";
-// Define the allowed blockchain types
+import {
+  createContext,
+  useContext,
+  useState,
+  type Dispatch,
+  type ReactNode,
+  type SetStateAction,
+} from "react";
+import type { Nft, SupportedChain } from "../utils/fetchNFT";
+
 export type Chain = "Ethereum" | "Polygon" | "Avalanche" | "Arbitrum";
 
-// Maps each chain to a list of collection names
-export type CollectionsByChain = {
-  [key in Chain]: string[];
+export interface CollectionInfo {
+  address: string;
+  chain: SupportedChain;
+}
+
+export const collectionInfoMap: Record<string, CollectionInfo> = {
+  "Bored Ape Yacht Club": {
+    address: "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D",
+    chain: "ethereum",
+  },
+  "Pudgy Penguins": {
+    address: "0xbd3531da5cf5857e7cfaa92426877b022e612cf8",
+    chain: "ethereum",
+  },
+  CryptoPunks: {
+    address: "0xb47e3cd837ddf8e4c57f05d70ab865de6e193bbb",
+    chain: "ethereum",
+  },
+  Azuki: {
+    address: "0xed5af388653567af2f388e6224dc7c4b3241c544",
+    chain: "ethereum",
+  },
+  Doodles: {
+    address: "0x8a90cab2b38dba80c64b7734e58ee1db38b8992e",
+    chain: "ethereum",
+  },
+  MetaVixens: {
+    address: "0xe1c7be9a91bb376acbb7c205f1f733a3468153b4",
+    chain: "polygon",
+  },
+  "Layer3 Cube": {
+    address: "0x1195cf65f83b3a5768f3c496d3a05ad6412c64b7",
+    chain: "polygon",
+  },
+  Voxies: {
+    address: "0xfbe3ab0cbfbd17d06bdd73aa3f55aaf038720f59",
+    chain: "polygon",
+  },
+  BROZZO: {
+    address: "0x220fa5ccc9404802ed6db0935eb4feefc27c937e",
+    chain: "polygon",
+  },
+  // The following are placeholders, update with real contract addresses and chains as needed
+  "Courtyard.io": {
+    address: "0x251be3a17af4892035c37ebf5890f4a4d889dcad",
+    chain: "polygon",
+  },
+  "Marty MILF": {
+    address: "0x06b06b0ded0f2f352487d06e4dc9d9b03cfa5282",
+    chain: "avalanche",
+  },
+  Dokyo: {
+    address: "0x54c800d2331e10467143911aabca092d68bf4166",
+    chain: "avalanche",
+  },
+  "CHAD DOGE": {
+    address: "0x357928b721890ed007142e45502a323827caf812",
+    chain: "avalanche",
+  },
+  Steady: {
+    address: "0xcdab7d987f0198edb440d014ed1e71256a0e3e7a",
+    chain: "avalanche",
+  },
+  Mambonauts: {
+    address: "0x2ee475a5cdc31c040ba1af3b0c4d66ca5c31c49a",
+    chain: "avalanche",
+  },
+  "Yeetards NFT": {
+    address: "0x2e660787bceccd39f67b8190a5bc4fc3ad3b64f7",
+    chain: "arbitrum",
+  },
+  "Pearl Club ONFT": {
+    address: "0xa805e1b42590be85d2c74e09c0e1c1b6063ea1a7",
+    chain: "arbitrum",
+  },
+  "Primapes": {
+    address: "0x72c3205acf3eb2b37b0082240bf0b909a46c0993",
+    chain: "arbitrum",
+  },
+  "Booga Beras": {
+    address: "0x6ba79f573edfe305e7dbd79902bc69436e197834",
+    chain: "arbitrum",
+  },
+  "UBISOFT- Niji Warrior": {
+    address: "0x66efaf92df6456c3cb810012b2de3fb223c25d0d",
+    chain: "arbitrum",
+  },
 };
 
-// Maps collection display names to their API slugs
-export type CollectionSlugMap = {
-  [key: string]: string;
-};
-
-// Default chain used when initializing state
-const DefaultChain: Chain = "Ethereum";
-
-// Maps human-readable collection names to their unique slugs
-export const collectionSlugs: CollectionSlugMap = {
-  "Bored Ape Yacht Club": "boredapeyachtclub",
-  "Pudgy Penguins": "pudgypenguins",
-  CryptoPunks: "cryptopunks",
-  Azuki: "azuki",
-  Doodles: "doodles-official",
-  Caymanpunk: "caymanpunk-559603470",
-  "Layer3 Cube": "layer3-cube-polygon",
-  Voxies: "voxies",
-  "Infinity Cats": "infinity-cats-1",
-  "Alien Buddy Buds": "alienbuddybuds",
-  Funkies: "funkies-5",
-  Dokyo: "dokyo",
-  AVAXdoodles: "avaxdoodles-626148607",
-  Steady: "steadynftavax",
-  Goose: "goose-269",
-  "Booga Beras": "booga-beras-5",
-  "Blue Beras": "blue-beras-8",
-  "Smol Brains": "smol-brains",
-  PawPal: "berapaw-pawpal",
-  "UBISOFT- Niji Warrior": "ubisoft-niji-warrior",
-};
-
-// Static list of collections grouped by blockchain
-export const collectionsByChain: CollectionsByChain = {
+export const collectionsByChain: Record<Chain, string[]> = {
   Ethereum: [
     "Bored Ape Yacht Club",
     "Pudgy Penguins",
@@ -50,87 +108,87 @@ export const collectionsByChain: CollectionsByChain = {
     "Doodles",
   ],
   Polygon: [
-    "Caymanpunk",
+    "MetaVixens",
     "Layer3 Cube",
     "Voxies",
-    "Infinity Cats",
-    "Alien Buddy Buds",
+    "BROZZO",
+    "Courtyard.io",
   ],
-  Avalanche: ["Funkies", "Dokyo", "AVAXdoodles", "Steady", "Goose"],
+  Avalanche: ["Marty MILF", "Dokyo", "CHAD DOGE", "Steady", "Mambonauts"],
   Arbitrum: [
+    "Yeetards NFT",
+    "Pearl Club ONFT",
+    "Primapes",
     "Booga Beras",
-    "Blue Beras",
-    "Smol Brains",
-    "PawPal",
     "UBISOFT- Niji Warrior",
   ],
 };
 
+const DefaultChain: Chain = "Ethereum";
 
-// Context type definition shared across components
 export interface FilterContextType {
-  selectedSlug: string;
-  selectedChain: Chain;
+  selectedCollection: string;
   selectedNFT: Nft | null;
   setSelectedNFT: Dispatch<SetStateAction<Nft | null>>;
   availableCollections: string[];
-  selectedCollection: string;
+  selectedAddress: string;
+  selectedChain: SupportedChain;
   updateSelectedChain: (chain: Chain) => void;
   updateSelectedCollection: (collection: string) => void;
   resetFilter: () => void;
 }
 
-// Create the actual context (initially undefined)
 const FilterContext = createContext<FilterContextType | undefined>(undefined);
 
-// Provider that wraps the app and supplies the filtering state
 export const FilterProvider = ({ children }: { children: ReactNode }) => {
-  // Initial state derived from default chain and its first collection
-  const [selectedSlug, setSelectedSlug] = useState<string>(
-    collectionSlugs[collectionsByChain[DefaultChain][0]]
-  );
-  const [selectedChain, setSelectedChain] = useState<Chain>(DefaultChain);
-  const [availableCollections, setAvailableCollections] = useState<string[]>(
-    collectionsByChain[DefaultChain]
-  );
   const [selectedCollection, setSelectedCollection] = useState<string>(
     collectionsByChain[DefaultChain][0]
   );
   const [selectedNFT, setSelectedNFT] = useState<Nft | null>(null);
+  const [availableCollections, setAvailableCollections] = useState<string[]>(
+    collectionsByChain[DefaultChain]
+  );
+  const [selectedAddress, setSelectedAddress] = useState<string>(
+    collectionInfoMap[collectionsByChain[DefaultChain][0]].address
+  );
+  const [selectedChain, setSelectedChain] = useState<SupportedChain>(
+    collectionInfoMap[collectionsByChain[DefaultChain][0]].chain
+  );
 
-  // When the chain is changed, update dependent states
   const updateSelectedChain = (chain: Chain) => {
-    setSelectedChain(chain);
-    const collections = collectionsByChain[chain] || [];
-    setAvailableCollections(collections);
-    setSelectedCollection(collections[0] || "");
-    setSelectedSlug(collectionSlugs[collections[0]]);
+    setAvailableCollections(collectionsByChain[chain]);
+    const firstCollection = collectionsByChain[chain][0];
+    setSelectedCollection(firstCollection);
+    setSelectedAddress(collectionInfoMap[firstCollection].address);
+    setSelectedChain(collectionInfoMap[firstCollection].chain);
   };
 
-  // When a specific collection is selected
   const updateSelectedCollection = (collection: string) => {
     setSelectedCollection(collection);
-    setSelectedSlug(collectionSlugs[collection]);
+    setSelectedAddress(collectionInfoMap[collection].address);
+    setSelectedChain(collectionInfoMap[collection].chain);
   };
 
-  // Reset all filters back to their default state
   const resetFilter = () => {
-    setSelectedChain(DefaultChain);
     setAvailableCollections(collectionsByChain[DefaultChain]);
     setSelectedCollection(collectionsByChain[DefaultChain][0]);
-    setSelectedSlug(collectionSlugs[collectionsByChain[DefaultChain][0]]);
+    setSelectedAddress(
+      collectionInfoMap[collectionsByChain[DefaultChain][0]].address
+    );
+    setSelectedChain(
+      collectionInfoMap[collectionsByChain[DefaultChain][0]].chain
+    );
   };
 
-  // Expose state and actions to context consumers
   return (
     <FilterContext.Provider
       value={{
-        selectedChain,
-        selectedSlug,
-        availableCollections,
         selectedCollection,
-        setSelectedNFT,
         selectedNFT,
+        setSelectedNFT,
+        availableCollections,
+        selectedAddress,
+        selectedChain,
         updateSelectedChain,
         updateSelectedCollection,
         resetFilter,
@@ -141,7 +199,6 @@ export const FilterProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-// Custom hook to use the filter context safely
 export const useFilter = (): FilterContextType => {
   const context = useContext(FilterContext);
   if (!context) {

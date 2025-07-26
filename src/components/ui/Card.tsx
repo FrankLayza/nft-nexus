@@ -33,7 +33,7 @@ const Card = ({
               <p>{price}</p>
               <p>{AIEstimate}</p>
             </div>
-            <div className="flex justify-between items-center text-xl tracking-wider">
+            <div className="flex justify-between items-center text-xl tracking-wide">
               <p className="font-bold">{priceValue}</p>
               <p className="font-bold text-green-600">{AIEstimateValue}</p>
             </div>
