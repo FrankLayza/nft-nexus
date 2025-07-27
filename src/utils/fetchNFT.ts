@@ -12,12 +12,25 @@ const options = {
   method: "GET",
 };
 
+export interface NFTAttribute {
+  trait_type: string;
+  value: string;
+}
+
 export interface Nft {
   identifier: string | number;
   name: string;
   description: string;
   image: string;
   price?: number;
+  // Additional fields for JuliaOS agent analysis
+  tokenId: string;
+  collection: string;
+  attributes: NFTAttribute[];
+  floorPrice: number;
+  totalSupply: number;
+  contractAddress: string;
+  chain: string;
 }
 
 interface AlchemyNftResponse {
@@ -30,9 +43,17 @@ interface AlchemyNftResponse {
   };
   contract: {
     name: string;
+    address: string;
     openSeaMetadata?: {
       floorPrice?: number;
+      totalSupply?: number;
     };
+  };
+  rawMetadata?: {
+    attributes?: Array<{
+      trait_type: string;
+      value: string;
+    }>;
   };
 }
 
@@ -40,7 +61,8 @@ export type SupportedChain = "ethereum" | "polygon" | "avalanche" | "arbitrum";
 
 export const fetchNftCollection = async (
   contractAddress: string,
-  chain: SupportedChain
+  chain: SupportedChain,
+  collectionName?: string
 ): Promise<Nft[]> => {
   if (!ALCHEMY_API_KEY) {
     throw new Error("Alchemy API key is not set!");
@@ -65,7 +87,7 @@ export const fetchNftCollection = async (
   const data = await res.json();
   console.log("fetchNftCollection - Raw data:", data);
 
-  // Map Alchemy API response to our Nft interface
+  // Map Alchemy API response to our enhanced Nft interface
   const mappedNfts = data.nfts.map((nft: AlchemyNftResponse) => ({
     identifier: nft.tokenId,
     name: nft.name || `#${nft.tokenId}`,
@@ -76,6 +98,14 @@ export const fetchNftCollection = async (
       nft.image?.originalUrl ||
       "https://via.placeholder.com/300x300?text=No+Image",
     price: nft.contract?.openSeaMetadata?.floorPrice,
+    // Enhanced fields for JuliaOS agent
+    tokenId: nft.tokenId,
+    collection: collectionName || nft.contract.name || "Unknown Collection",
+    attributes: nft.rawMetadata?.attributes || [],
+    floorPrice: nft.contract?.openSeaMetadata?.floorPrice || 0,
+    totalSupply: nft.contract?.openSeaMetadata?.totalSupply || 10000,
+    contractAddress: nft.contract.address,
+    chain: chain,
   }));
 
   console.log("fetchNftCollection - Mapped NFTs:", mappedNfts);

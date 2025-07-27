@@ -14,32 +14,34 @@ type CardGridProps = {
 const CardGrid = ({ className }: CardGridProps) => {
   const [isSearching, setIsSearching] = useState(false);
 
-  const { selectedAddress, selectedChain, setSelectedNFT } = useFilter();
+  const { selectedAddress, selectedChain, selectedCollection, setSelectedNFT } = useFilter();
 
-  console.log(
-    "CardGrid - selectedAddress:",
-    selectedAddress,
-    "selectedChain:",
-    selectedChain
-  );
+  // console.log(
+  //   "CardGrid - selectedAddress:",
+  //   selectedAddress,
+  //   "selectedChain:",
+  //   selectedChain,
+  //   "selectedCollection:",
+  //   selectedCollection
+  // );
 
   const { data, error, isLoading, refetch } = useQuery<Nft[]>({
-    queryKey: ["nft-collection", selectedAddress, selectedChain],
-    queryFn: () => fetchNftCollection(selectedAddress, selectedChain),
+    queryKey: ["nft-collection", selectedAddress, selectedChain, selectedCollection],
+    queryFn: () => fetchNftCollection(selectedAddress, selectedChain, selectedCollection),
     enabled: !!selectedAddress && !!selectedChain,
     refetchOnWindowFocus: false,
     staleTime: 0,
     gcTime: 0,
   });
 
-  console.log(
-    "CardGrid - data:",
-    data,
-    "error:",
-    error,
-    "isLoading:",
-    isLoading
-  );
+  // console.log(
+  //   "CardGrid - data:",
+  //   data,
+  //   "error:",
+  //   error,
+  //   "isLoading:",
+  //   isLoading
+  // );
 
   useEffect(() => {
     if (isLoading) {
@@ -55,14 +57,15 @@ const CardGrid = ({ className }: CardGridProps) => {
   // Force refetch when address or chain changes
   useEffect(() => {
     if (selectedAddress && selectedChain) {
-      console.log(
-        "CardGrid - Triggering refetch for:",
-        selectedAddress,
-        selectedChain
-      );
+      // console.log(
+      //   "CardGrid - Triggering refetch for:",
+      //   selectedAddress,
+      //   selectedChain,
+      //   selectedCollection
+      // );
       refetch();
     }
-  }, [selectedAddress, selectedChain, refetch]);
+  }, [selectedAddress, selectedChain, selectedCollection, refetch]);
 
   return (
     <div className="flex-1">

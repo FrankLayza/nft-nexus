@@ -5,11 +5,45 @@ import Badge from "./ui/Badge";
 import Separator from "./ui/Separator";
 import Progress from "./ui/Progress";
 import { useFilter } from "../contexts/FilterContext";
+import { juliaOSService } from "../services/juliaOSService";
+import type { NFTAnalysisResult, NFTAnalysisInput } from "../services/juliaOSService";
 
 const AgentPanel = () => {
     const {selectedNFT} = useFilter();
     const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false);
-    const [agentInsights, setAgentInsights] = useState<"BUY" | "SELL" | null>("BUY");
+    const [analysisResult, setAnalysisResult] = useState<NFTAnalysisResult | null>(null);
+    const [error, setError] = useState<string | null>(null);
+    
+    const analyzeNFTWithAgent = async () => {
+        if (!selectedNFT) return;
+        
+        setIsAnalyzing(true);
+        setError(null);
+        
+        try {
+            // Prepare the input for the JuliaOS agent with enhanced NFT data
+            const input: NFTAnalysisInput = {
+                collection: selectedNFT.collection || "Unknown Collection",
+                token_id: selectedNFT.tokenId || selectedNFT.name || "Unknown",
+                attributes: selectedNFT.attributes || [],
+                floor_price: selectedNFT.floorPrice || 0,
+                total_supply: selectedNFT.totalSupply || 10000
+            };
+            
+            console.log("Sending NFT data to JuliaOS agent:", input);
+            
+            // Call the JuliaOS agent
+            const result = await juliaOSService.analyzeNFT(input);
+            setAnalysisResult(result);
+            
+            console.log("JuliaOS agent analysis result:", result);
+        } catch (err) {
+            console.error('Analysis failed:', err);
+            setError(err instanceof Error ? err.message : 'Analysis failed');
+        } finally {
+            setIsAnalyzing(false);
+        }
+    };
     
     return (  
         <div className="h-fit rounded-lg border border-gray-300 bg-white">
@@ -32,23 +66,16 @@ const AgentPanel = () => {
                                     />
                                     <div className="flex-1 min-w-0">
                                         <h4 className="font-medium truncate">{selectedNFT.name}</h4>
-                                        <p className="text-sm text-gray-600">Pi Punks</p>
+                                        <p className="text-sm text-gray-600">{selectedNFT.collection || "Unknown Collection"}</p>
                                     </div>
                                 </div>
                                 <button 
-                                    onClick={async () => {
-                                        setIsAnalyzing(true);
-
-                                        // Simulate an API call
-                                        setTimeout(() => {
-                                            setIsAnalyzing(false);
-                                        }, 10000);
-                                    }}
+                                    onClick={analyzeNFTWithAgent}
                                     disabled={isAnalyzing} className="btn btn-neutral text-white w-full disabled:pointer-events-none">
                                     {isAnalyzing ? (
                                         <>
                                         <Zap className="w-4 h-4 mr-2 animate-pulse" />
-                                        Analyzing...
+                                        Analyzing with JuliaOS Agent...
                                         </>
                                     ) : (
                                         <>
@@ -57,16 +84,26 @@ const AgentPanel = () => {
                                         </>
                                     )}
                                 </button>
+                                
+                                {error && (
+                                    <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+                                        <div className="flex items-center gap-2 text-red-800">
+                                            <AlertTriangle className="w-4 h-4" />
+                                            <span className="text-sm font-medium">Analysis Error</span>
+                                        </div>
+                                        <p className="text-xs text-red-700 mt-1">{error}</p>
+                                    </div>
+                                )}
                             </div>
                             {
-                                isAnalyzing && (
+                                analysisResult && (
                                     <div>
                                         <div className="space-y-4 w-full">
                                             <div className="flex items-center justify-between">
                                                 <span className="text-sm font-medium">Recommendation</span>
                                                 <Badge
-                                                className={`${agentInsights === "BUY" ? "bg-green-100 text-green-800 border-green-200" : agentInsights === "SELL" ? "bg-red-100 text-red-800 border-red-200" : "bg-yellow-100 text-yellow-800 border-yellow-200"} `}>
-                                                {agentInsights}
+                                                className={`${analysisResult?.recommendation === "BUY" ? "bg-green-100 text-green-800 border-green-200" : analysisResult?.recommendation === "SELL" ? "bg-red-100 text-red-800 border-red-200" : "bg-yellow-100 text-yellow-800 border-yellow-200"} `}>
+                                                {analysisResult?.recommendation || "ANALYZING"}
                                                 </Badge>
                                             </div>
                                         </div>
@@ -74,19 +111,19 @@ const AgentPanel = () => {
                                             <div>
                                                 <div className="flex items-center justify-between mb-2">
                                                     <span className="text-sm font-medium">Confidence</span>
-                                                    <span className="text-sm text-gray-600">87%</span>
+                                                    <span className="text-sm text-gray-600">{analysisResult?.confidence || 0}%</span>
                                                 </div>
-                                                <Progress value="87" max="100" className="progress-neutral"></Progress>
+                                                <Progress value={analysisResult?.confidence?.toString() || "0"} max="100" className="progress-neutral"></Progress>
                                             </div>
 
                                             <div className="grid grid-cols-2 gap-3 text-sm">
                                                 <div>
                                                     <p className="text-gray-600">Price Target</p>
-                                                    <p className="font-bold text-green-600">3.8 ETH</p>
+                                                    <p className="font-bold text-green-600">{analysisResult?.price_prediction?.toFixed(2) || "0"} ETH</p>
                                                 </div>
                                                 <div>
                                                     <p className="text-gray-600">Risk Level</p>
-                                                    <p className="font-semibold">Medium</p>
+                                                    <p className="font-semibold capitalize">{analysisResult?.risk_level || "Unknown"}</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -96,20 +133,22 @@ const AgentPanel = () => {
                                             <div className="flex items-center justify-between text-sm font-semibold">
                                                 <span className="text-gray-600">Sentiment</span>
                                                 <div className="flex items-center gap-1">
-                                                    <TrendingUp className="w-4 h-4 text-green-500" />
-                                                    <span className="text-green-600">Bullish</span>
+                                                    <TrendingUp className={`w-4 h-4 ${analysisResult?.market_sentiment === 'bullish' ? 'text-green-500' : analysisResult?.market_sentiment === 'bearish' ? 'text-red-500' : 'text-yellow-500'}`} />
+                                                    <span className={`capitalize ${analysisResult?.market_sentiment === 'bullish' ? 'text-green-600' : analysisResult?.market_sentiment === 'bearish' ? 'text-red-600' : 'text-yellow-600'}`}>
+                                                        {analysisResult?.market_sentiment || "Analyzing"}
+                                                    </span>
                                                 </div>
                                             </div>
                                             <div className="flex items-center justify-between font-semibold text-sm">
-                                                <span className="text-gray-600">Volume Spike</span>
-                                                <Badge className="bg-neutral-100 text-neutral-800 border-neutral-200">
-                                                    Yes
-                                                </Badge>
+                                                <span className="text-gray-600">Collection</span>
+                                                <span className="font-medium">
+                                                    {analysisResult?.collection || "Unknown"}
+                                                </span>
                                             </div>
                                             <div className="flex items-center justify-between font-semibold text-sm">
-                                                <span className="text-gray-600">Rarity Rank</span>
+                                                <span className="text-gray-600">Token ID</span>
                                                 <span className="font-medium">
-                                                    #234 / 10000
+                                                    {analysisResult?.token_id || "Unknown"}
                                                 </span>
                                             </div>
                                         </div>
@@ -120,18 +159,24 @@ const AgentPanel = () => {
                                                 <span className="text-gray-600">Rarity Score</span>
                                                 <div className="flex items-center gap-1">
                                                     <Sparkles className="w-4 h-4 text-purple-500" />
-                                                    <span className="text-purple-600">9.2/10</span>
+                                                    <span className="text-purple-600">{analysisResult?.rarity_score || 0}/10</span>
                                                 </div>
                                             </div>
                                             <div className="flex items-center justify-between font-semibold text-sm">
                                                 <span className="text-gray-600">Market Prediction</span>
-                                                <Badge className="bg-green-100 text-green-800 border-green-200">
-                                                    +15%
+                                                <Badge className={`${analysisResult?.market_sentiment === 'bullish' ? 'bg-green-100 text-green-800 border-green-200' : analysisResult?.market_sentiment === 'bearish' ? 'bg-red-100 text-red-800 border-red-200' : 'bg-yellow-100 text-yellow-800 border-yellow-200'}`}>
+                                                    {analysisResult?.market_sentiment === 'bullish' ? '+20%' : analysisResult?.market_sentiment === 'bearish' ? '-20%' : '0%'}
                                                 </Badge>
                                             </div>
-                                            <div className="flex items-center justify-between text-xs pt-4">
-                                                <span className="text-gray-600">This NFT shows strong fundamentals with above-average rarity traits. Market sentiment is positive with increasing floor price trends.</span>
-                                            </div>
+                                            {analysisResult?.insights && (
+                                                <div className="space-y-1 pt-2">
+                                                    {analysisResult.insights.map((insight, index) => (
+                                                        <div key={index} className="text-xs text-gray-600 bg-gray-50 p-2 rounded">
+                                                            {insight}
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
                                         </div>
                                         <Separator />
                                         <div className="space-y-2 w-full">
@@ -147,15 +192,17 @@ const AgentPanel = () => {
                                             </Button>
                                             </div>
                                         </div>
-                                        <div className="p-3 bg-red-50 border border-red-200 rounded-lg w-full my-4">
-                                            <div className="flex items-center gap-2 text-red-800">
-                                                <AlertTriangle className="w-4 h-4" />
-                                                <span className="text-sm font-medium">Risk Alert</span>
+                                        {analysisResult?.risk_level === 'high' && (
+                                            <div className="p-3 bg-red-50 border border-red-200 rounded-lg w-full my-4">
+                                                <div className="flex items-center gap-2 text-red-800">
+                                                    <AlertTriangle className="w-4 h-4" />
+                                                    <span className="text-sm font-medium">Risk Alert</span>
+                                                </div>
+                                                <p className="text-xs text-red-700 mt-1">
+                                                    This NFT has been flagged as high risk. Exercise caution.
+                                                </p>
                                             </div>
-                                            <p className="text-xs text-red-700 mt-1">
-                                                This NFT has been flagged for suspicious activity. Exercise caution.
-                                            </p>
-                                        </div>
+                                        )}
                                     </div>
                                 )
                             }
