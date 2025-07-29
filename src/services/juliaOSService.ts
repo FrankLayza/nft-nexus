@@ -36,8 +36,8 @@ class JuliaOSService {
 
   constructor() {
     // Update this URL to match your JuliaOS backend
-    this.baseUrl = 'http://localhost:8052/api/v1';
-    this.agentId = 'nft-analyzer-001';
+    this.baseUrl = "/api/api/v1";
+    this.agentId = "nft-analyzer-001";
   }
 
   /**
@@ -46,33 +46,38 @@ class JuliaOSService {
   async analyzeNFT(input: NFTAnalysisInput): Promise<NFTAnalysisResult> {
     try {
       // Trigger the agent analysis
-      const triggerResponse = await fetch(`${this.baseUrl}/agents/${this.agentId}/webhook`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(input),
-      });
+      const triggerResponse = await fetch(
+        `${this.baseUrl}/agents/${this.agentId}/webhook`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(input),
+        }
+      );
 
       if (!triggerResponse.ok) {
         throw new Error(`Agent trigger failed: ${triggerResponse.statusText}`);
       }
 
       // Wait a moment for the agent to process
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // Get the agent logs to extract the analysis result
-      const logsResponse = await fetch(`${this.baseUrl}/agents/${this.agentId}/logs`);
+      const logsResponse = await fetch(
+        `${this.baseUrl}/agents/${this.agentId}/logs`
+      );
       if (!logsResponse.ok) {
         throw new Error(`Failed to get agent logs: ${logsResponse.statusText}`);
       }
 
       const logsData: AgentLog = await logsResponse.json();
-      
+
       // Parse the analysis result from the logs
       return this.parseAnalysisFromLogs(logsData.logs, input);
     } catch (error) {
-      console.error('JuliaOS analysis failed:', error);
+      console.error("JuliaOS analysis failed:", error);
       throw error;
     }
   }
@@ -80,29 +85,39 @@ class JuliaOSService {
   /**
    * Parse the analysis result from agent logs
    */
-  private parseAnalysisFromLogs(logs: string[], input: NFTAnalysisInput): NFTAnalysisResult {
+  private parseAnalysisFromLogs(
+    logs: string[],
+    input: NFTAnalysisInput
+  ): NFTAnalysisResult {
     // Get the most recent analysis (last complete set of logs)
     const recentLogs = logs.slice(-6); // Last 6 log entries for one complete analysis
-    
+
     let rarityScore = 0;
-    let marketSentiment = 'neutral';
-    let recommendation = 'HOLD';
+    let marketSentiment = "neutral";
+    let recommendation = "HOLD";
 
     // Extract values from logs
     for (const log of recentLogs) {
-      if (log.includes('Rarity score:')) {
-        rarityScore = parseInt(log.split(':')[1].trim());
-      } else if (log.includes('Market sentiment:')) {
-        marketSentiment = log.split(':')[1].trim();
-      } else if (log.includes('Recommendation:')) {
-        recommendation = log.split(':')[1].trim();
+      if (log.includes("Rarity score:")) {
+        rarityScore = parseInt(log.split(":")[1].trim());
+      } else if (log.includes("Market sentiment:")) {
+        marketSentiment = log.split(":")[1].trim();
+      } else if (log.includes("Recommendation:")) {
+        recommendation = log.split(":")[1].trim();
       }
     }
 
     // Calculate mock values based on the analysis
-    const pricePrediction = input.floor_price * (marketSentiment === 'bullish' ? 1.2 : marketSentiment === 'bearish' ? 0.8 : 1.0);
-    const riskLevel = rarityScore > 7 ? 'low' : rarityScore < 4 ? 'high' : 'medium';
-    const confidence = Math.min(95, Math.max(70, 70 + (rarityScore * 3)));
+    const pricePrediction =
+      input.floor_price *
+      (marketSentiment === "bullish"
+        ? 1.2
+        : marketSentiment === "bearish"
+        ? 0.8
+        : 1.0);
+    const riskLevel =
+      rarityScore > 7 ? "low" : rarityScore < 4 ? "high" : "medium";
+    const confidence = Math.min(95, Math.max(70, 70 + rarityScore * 3));
 
     return {
       collection: input.collection,
@@ -117,8 +132,8 @@ class JuliaOSService {
         `Rarity score of ${rarityScore}/10 based on ${input.attributes.length} attributes`,
         `Market sentiment is ${marketSentiment}`,
         `Risk level: ${riskLevel}`,
-        `Confidence: ${confidence}%`
-      ]
+        `Confidence: ${confidence}%`,
+      ],
     };
   }
 
@@ -130,7 +145,7 @@ class JuliaOSService {
       const response = await fetch(`${this.baseUrl}/agents/${this.agentId}`);
       return response.ok;
     } catch (error) {
-      console.error('Failed to check agent status:', error);
+      console.error("Failed to check agent status:", error);
       return false;
     }
   }
@@ -146,11 +161,11 @@ class JuliaOSService {
       }
       return await response.json();
     } catch (error) {
-      console.error('Failed to get agents:', error);
+      console.error("Failed to get agents:", error);
       return [];
     }
   }
 }
 
 // Export a singleton instance
-export const juliaOSService = new JuliaOSService(); 
+export const juliaOSService = new JuliaOSService();
