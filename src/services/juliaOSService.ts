@@ -30,6 +30,8 @@ export interface AgentLog {
   logs: string[];
 }
 
+const resultsCache: Record<string, NFTAnalysisResult> = {};
+
 class JuliaOSService {
   private baseUrl: string;
   private agentId: string;
@@ -43,9 +45,19 @@ class JuliaOSService {
   /**
    * Analyze an NFT using the JuliaOS agent
    */
+  // At the top of your class or module (outside the function)
   async analyzeNFT(input: NFTAnalysisInput): Promise<NFTAnalysisResult> {
     try {
-      // Trigger the agent analysis
+      // 🧠 Define a cache key based on NFT identity
+      const cacheKey = `${input.collection}-${input.token_id}`;
+
+      // ✅ Return cached result if it exists
+      if (resultsCache[cacheKey]) {
+        console.log("Serving result from cache:", cacheKey);
+        return resultsCache[cacheKey];
+      }
+
+      // 🚀 Trigger the agent analysis
       const triggerResponse = await fetch(
         `${this.baseUrl}/agents/${this.agentId}/webhook`,
         {
@@ -61,26 +73,33 @@ class JuliaOSService {
         throw new Error(`Agent trigger failed: ${triggerResponse.statusText}`);
       }
 
-      // Wait a moment for the agent to process
+      // 🕒 Wait briefly for processing
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      // Get the agent logs to extract the analysis result
+      // 📜 Get logs to extract result
       const logsResponse = await fetch(
         `${this.baseUrl}/agents/${this.agentId}/logs`
       );
+
       if (!logsResponse.ok) {
         throw new Error(`Failed to get agent logs: ${logsResponse.statusText}`);
       }
 
       const logsData: AgentLog = await logsResponse.json();
 
-      // Parse the analysis result from the logs
-      return this.parseAnalysisFromLogs(logsData.logs, input);
+      // 🔍 Parse result from logs
+      const result = this.parseAnalysisFromLogs(logsData.logs, input);
+
+      // 💾 Cache it for future requests
+      resultsCache[cacheKey] = result;
+
+      return result;
     } catch (error) {
       console.error("JuliaOS analysis failed:", error);
       throw error;
     }
   }
+
 
   /**
    * Parse the analysis result from agent logs
@@ -89,53 +108,54 @@ class JuliaOSService {
     logs: string[],
     input: NFTAnalysisInput
   ): NFTAnalysisResult {
-    // Get the most recent analysis (last complete set of logs)
-    const recentLogs = logs.slice(-6); // Last 6 log entries for one complete analysis
-
-    let rarityScore = 0;
-    let marketSentiment = "neutral";
-    let recommendation = "HOLD";
-
-    // Extract values from logs
-    for (const log of recentLogs) {
-      if (log.includes("Rarity score:")) {
-        rarityScore = parseInt(log.split(":")[1].trim());
-      } else if (log.includes("Market sentiment:")) {
-        marketSentiment = log.split(":")[1].trim();
-      } else if (log.includes("Recommendation:")) {
-        recommendation = log.split(":")[1].trim();
-      }
+    // Step 1: Identify all indexes where this NFT's analysis started
+    const startIndexes: number[] = logs
+      .map((line, index) => ({ line, index }))
+      .filter(({ line }) =>
+        line.includes(`Starting intelligent NFT analysis for collection: ${input.collection}`) &&
+        line.includes(`token: ${input.token_id}`)
+      )
+      .map(({ index }) => index);
+  
+    if (startIndexes.length === 0) {
+      throw new Error("No matching analysis logs found for this NFT.");
     }
-
-    // Calculate mock values based on the analysis
-    const pricePrediction =
-      input.floor_price *
-      (marketSentiment === "bullish"
-        ? 1.2
-        : marketSentiment === "bearish"
-        ? 0.8
-        : 1.0);
-    const riskLevel =
-      rarityScore > 7 ? "low" : rarityScore < 4 ? "high" : "medium";
-    const confidence = Math.min(95, Math.max(70, 70 + rarityScore * 3));
-
+  
+    // Step 2: Pick the *most recent* matching analysis block
+    const startIndex = startIndexes[startIndexes.length - 1];
+  
+    // Step 3: Slice from the start of the block to the end
+    // (assumes log for an analysis always ends with "Key insights:")
+    const relevantLogs = logs.slice(startIndex);
+    const endIndex = relevantLogs.findIndex((line) =>
+      line.includes("Key insights:")
+    );
+  
+    if (endIndex === -1) {
+      throw new Error("Incomplete log block. Could not find 'Key insights'.");
+    }
+  
+    const analysisBlock = relevantLogs.slice(0, endIndex + 1);
+  
+    // Step 4: Extract fields from the matched block
+    const getField = (prefix: string) =>
+      analysisBlock.find((line) => line.startsWith(prefix))?.split(":")[1].trim() || "";
+  
     return {
       collection: input.collection,
       token_id: input.token_id,
-      rarity_score: rarityScore,
-      market_sentiment: marketSentiment,
-      price_prediction: pricePrediction,
-      risk_level: riskLevel,
-      recommendation: recommendation,
-      confidence: confidence,
-      insights: [
-        `Rarity score of ${rarityScore}/10 based on ${input.attributes.length} attributes`,
-        `Market sentiment is ${marketSentiment}`,
-        `Risk level: ${riskLevel}`,
-        `Confidence: ${confidence}%`,
-      ],
+      rarity_score: parseFloat(getField("Rarity score")),
+      market_sentiment: getField("Market sentiment"),
+      price_prediction: parseFloat(getField("Price prediction").replace(" ETH", "")),
+      risk_level: getField("Risk level"),
+      recommendation: getField("Recommendation"),
+      confidence: parseFloat(getField("Confidence").replace("%", "")),
+      key_insights: analysisBlock
+        .filter((line) => line.trim().startsWith("•") || line.trim().startsWith("-"))
+        .map((line) => line.replace(/^[-•]\s*/, "").trim()),
     };
   }
+  
 
   /**
    * Get agent status
