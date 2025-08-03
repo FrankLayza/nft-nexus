@@ -39,12 +39,12 @@ const Card = ({
             </div>
         </div>
 
-        <div className="flex justify-between items-center">
+        {/* <div className="flex justify-between items-center">
           <div>
             <p>Rarity:</p>
             <p>9.0</p>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );
