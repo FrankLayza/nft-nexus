@@ -10,12 +10,14 @@ import { fetchNftCollection } from "../utils/fetchNFT";
 import {
   collectionsByChain,
   collectionInfoMap,
+  useFilter,
 } from "../contexts/FilterContext";
 import type { Chain } from "../contexts/FilterContext";
 
 const SearchPage = () => {
   const { searchQuery, setSearchQuery } = useSearchQuery();
   const [isSearching, setIsSearching] = useState<boolean>(false);
+  const { setSelectedNFT } = useFilter();
 
   // Flatten the collectionsByChain object to a list of collections with info
   const allCollections = Object.entries(
@@ -106,7 +108,9 @@ const SearchPage = () => {
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-semibold">
                   Search Results{" "}
-                  {data !== undefined && data !== null ? data.length : null}
+                  {data?.nfts !== undefined && data.nfts !== null
+                    ? data.nfts.length
+                    : null}
                 </h3>
                 {searchQuery && (
                   <Button
@@ -134,11 +138,14 @@ const SearchPage = () => {
                     </div>
                   ))}
                 </div>
-              ) : data !== undefined && data !== null && data.length > 0 ? (
+              ) : data !== undefined &&
+                data !== null &&
+                data.nfts.length > 0 ? (
                 <div className="space-y-3 max-h-96 overflow-y-auto">
-                  {data.map((collection) => (
+                  {data.nfts.map((collection) => (
                     <div
                       key={collection.identifier}
+                      onClick={() => setSelectedNFT(collection)}
                       className="flex flex-col lg:flex-row items-center space-x-4 p-4 border border-gray-300 rounded-lg cursor-pointer"
                     >
                       <div className="w-1/2 h-40 lg:w-15 lg:h-15 overflow-hidden rounded-lg">
@@ -161,21 +168,23 @@ const SearchPage = () => {
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
                           <div>
                             <span className="text-gray-500">Floor:</span>
-                            <div className="font-medium">3.8 ETH</div>
+                            <div className="font-medium">
+                              {collection.floorPrice} ETH
+                            </div>
                           </div>
                           <div>
                             <span className="text-gray-500">24h Vol:</span>
-                            <div className="font-medium">654 ETH</div>
+                            <div className="font-medium">-- ETH</div>
                           </div>
                           <div>
                             <span className="text-gray-500">Change:</span>
                             <div className={`font-medium text-green-600`}>
-                              +1.5%
+                              +--%
                             </div>
                           </div>
                           <div>
                             <span className="text-gray-500">Holders:</span>
-                            <div className="font-medium">4,234</div>
+                            <div className="font-medium">--</div>
                           </div>
                         </div>
                       </div>
