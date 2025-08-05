@@ -15,6 +15,8 @@ type CardGridProps = {
 
 const CardGrid = ({ className }: CardGridProps) => {
   const [isSearching, setIsSearching] = useState(false);
+  const [pageKey, setPageKey] = useState<string | null>(null);
+  const [prevKeys, setPrevKeys] = useState<string[]>([]);
 
   const { selectedAddress, selectedChain, selectedCollection, setSelectedNFT } =
     useFilter();
@@ -28,20 +30,31 @@ const CardGrid = ({ className }: CardGridProps) => {
   //   selectedCollection
   // );
 
-  const { data, error, isLoading, refetch } = useQuery<Nft[]>({
-    queryKey: [
-      "nft-collection",
-      selectedAddress,
-      selectedChain,
-      selectedCollection,
-    ],
-    queryFn: () =>
-      fetchNftCollection(selectedAddress, selectedChain, selectedCollection),
-    enabled: !!selectedAddress && !!selectedChain,
-    refetchOnWindowFocus: false,
-    staleTime: 0,
-    gcTime: 0,
-  });
+const { data, error, isLoading, refetch } = useQuery({
+  queryKey: ["nft-collection", selectedAddress, selectedChain, selectedCollection, pageKey],
+  queryFn: () =>
+    fetchNftCollection(selectedAddress, selectedChain, selectedCollection, pageKey || undefined),
+  enabled: !!selectedAddress && !!selectedChain,
+  refetchOnWindowFocus: false,
+  staleTime: 0,
+  gcTime: 0,
+});
+
+
+const handleNext = () => {
+  if (data?.nextPageKey) {
+    setPrevKeys((prev) => [...prev, pageKey || ""]);
+    setPageKey(data.nextPageKey);
+  }
+};
+
+const handlePrev = () => {
+  const prev = [...prevKeys];
+  const lastKey = prev.pop();
+  setPrevKeys(prev);
+  setPageKey(lastKey || null);
+};
+
 
   // console.log(
   //   "CardGrid - data:",
@@ -82,7 +95,7 @@ const CardGrid = ({ className }: CardGridProps) => {
         <div className="xl:flex items-center space-x-4 flex-1">
           <h1 className="text-2xl font-bold">Explore NFTs</h1>
           <div className="badge badge-soft text-sm">
-            {data?.length || 0} items
+            {data?.nfts.length || 0} items
           </div>
         </div>
         <div className="flex items-center gap-3">
@@ -104,7 +117,7 @@ const CardGrid = ({ className }: CardGridProps) => {
           ? [...Array(6)].map((_, index) => (
               <SkeletonLoader key={index} isSearching={true} />
             ))
-          : data?.map((nft: Nft) => (
+          : data?.nfts.map((nft: Nft) => (
               <div key={nft.identifier} onClick={() => setSelectedNFT(nft)}>
                 <Card
                   image={nft?.image}
@@ -120,10 +133,10 @@ const CardGrid = ({ className }: CardGridProps) => {
             ))}
       </div>
       <div className="flex justify-between">
-        <Button>
+        <Button onClick={handlePrev} disabled={prevKeys.length === 0}>
           <ChevronLeft />
         </Button>
-        <Button>
+        <Button onClick={handleNext} disabled={!data?.nextPageKey}>
           <ChevronRight />
         </Button>
       </div>

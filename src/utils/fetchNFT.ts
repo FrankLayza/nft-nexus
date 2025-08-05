@@ -1,5 +1,6 @@
 // const OPENSEA_NFT = import.meta.env.VITE_GET_NFT_OPENSEA
-import { attachRarityScores } from "./rarityScore";
+import { attachRarityScores, rarityDisplay } from "./rarityScore";
+import type { RarityScoreType } from "../components/ui/Card";
 const ALCHEMY_API_KEY = import.meta.env.VITE_GET_ALCHEMY;
 
 const ALCHEMY_BASE_URLS: Record<string, string> = {
@@ -32,7 +33,7 @@ export interface Nft {
   totalSupply: number;
   contractAddress: string;
   chain: string;
-  rarityvalue: number;
+  rarityvalue: RarityScoreType;
 }
 
 export interface AlchemyNftResponse {
@@ -62,12 +63,15 @@ export interface AlchemyNftResponse {
 }
 
 export type SupportedChain = "ethereum" | "polygon" | "avalanche" | "arbitrum";
-
 export const fetchNftCollection = async (
   contractAddress: string,
   chain: SupportedChain,
-  collectionName?: string
-): Promise<(Nft & { rarityvalue: number })[]> => {
+  collectionName?: string,
+  pageKey?: string
+): Promise<{
+  nfts: (Nft & { rarityvalue: object })[];
+  nextPageKey?: string;
+}> => {
   if (!ALCHEMY_API_KEY) {
     throw new Error("Alchemy API key is not set!");
   }
@@ -75,7 +79,8 @@ export const fetchNftCollection = async (
   if (!baseUrl) {
     throw new Error(`Alchemy base URL is not set for chain: ${chain}`);
   }
-  const url = `${baseUrl}/${ALCHEMY_API_KEY}/getNFTsForContract?contractAddress=${contractAddress}&withMetadata=true&pageSize=18`;
+  const url = `${baseUrl}/${ALCHEMY_API_KEY}/getNFTsForContract?contractAddress=${contractAddress}&withMetadata=true&pageSize=18${pageKey ? `&pageKey=${pageKey}` : ""}`;
+
   console.log("fetchNftCollection - URL:", url);
 
   const res = await fetch(url, options);
@@ -110,7 +115,10 @@ export const fetchNftCollection = async (
     totalSupply: Number(nft.contract?.openSeaMetadata?.totalSupply) || 10000,
     contractAddress: nft.contract.address,
     chain: chain,
-    rarityvalue: nft.rarityScore,
+    rarityvalue: rarityDisplay(nft.rarityScore),
   }));
-  return mappedNfts;
+  return {
+   nfts: mappedNfts,
+    nextPageKey: data?.pageKey
+  } ;
 };
