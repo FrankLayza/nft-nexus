@@ -1,6 +1,5 @@
 import Button from "./ui/Button";
 import { Link } from "react-router-dom";
-import Input from "./ui/Input";
 import { Menu, X } from "lucide-react";
 import { useSidebar } from "../contexts/SidebarContext";
 
@@ -13,12 +12,12 @@ const Navbar = () => {
         <div className="container mx-auto flex items-center justify-between">
           <div className="flex items-center">
             <Button onClick={() => setSidebarOpen(!sidebarOpen)} className={`xl:hidden mr-2 transform transition-transform duration-300 ${ sidebarOpen ? "scale-x-[-1]" : "scale-x-[1]" }`}>{ !sidebarOpen ? <Menu className="h-5 w-5" /> : <X className="h-5 w-5" />}</Button>
-            <Link className="text-xl font-bold" to="/">NFT NEXUS</Link>
+            <h2 className="text-xl font-bold">NFT NEXUS</h2>
           </div>
 
           <nav className="hidden xl:flex items-center space-x-5">
-            <Button className="btn btn-ghost">EXPLORE</Button>
-            <Button className="btn btn-ghost">COLLECTION</Button>
+            <Button className="btn btn-ghost"><Link to={'/'}>EXPLORE</Link></Button>
+            <Button className="btn btn-ghost"><Link to={'/collection'}>COLLECTION</Link></Button>
             <Button className="btn btn-ghost">AI AGENTS</Button>
             <Button className="btn btn-ghost">ANALYTICS</Button>
           </nav>

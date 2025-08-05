@@ -5,6 +5,7 @@ import Home from "./pages/Home";
 import DYORPage from "./components/DYORPage";
 import Dashboard from "./components/Dashboard";
 import SearchPage from "./components/SearchPage";
+import CollectionPage from "./components/CollectionPage"
 
 createAppKit({
   adapters: [wagmiAdapter],
@@ -22,6 +23,7 @@ function App() {
           <Route index element={<Dashboard />} />
           <Route path="dyor" element={<DYORPage />} />
           <Route path="Search" element={<SearchPage />} />
+          <Route path="collection" element={<CollectionPage />} />
         </Route>
       </Routes>
     </>

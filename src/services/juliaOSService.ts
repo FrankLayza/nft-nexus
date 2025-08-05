@@ -150,7 +150,7 @@ class JuliaOSService {
       risk_level: getField("Risk level"),
       recommendation: getField("Recommendation"),
       confidence: parseFloat(getField("Confidence").replace("%", "")),
-      key_insights: analysisBlock
+      insights: analysisBlock
         .filter((line) => line.trim().startsWith("•") || line.trim().startsWith("-"))
         .map((line) => line.replace(/^[-•]\s*/, "").trim()),
     };

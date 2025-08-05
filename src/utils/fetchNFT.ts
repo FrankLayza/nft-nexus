@@ -1,4 +1,5 @@
 // const OPENSEA_NFT = import.meta.env.VITE_GET_NFT_OPENSEA
+import { attachRarityScores } from "./rarityScore";
 const ALCHEMY_API_KEY = import.meta.env.VITE_GET_ALCHEMY;
 
 const ALCHEMY_BASE_URLS: Record<string, string> = {
@@ -31,9 +32,10 @@ export interface Nft {
   totalSupply: number;
   contractAddress: string;
   chain: string;
+  rarityvalue: number;
 }
 
-interface AlchemyNftResponse {
+export interface AlchemyNftResponse {
   tokenId: string;
   name: string | null;
   description: string | null;
@@ -49,11 +51,13 @@ interface AlchemyNftResponse {
       totalSupply?: number;
     };
   };
-  rawMetadata?: {
-    attributes?: Array<{
-      trait_type: string;
-      value: string;
-    }>;
+  raw?: {
+    metadata?: {
+      attributes?: Array<{
+        trait_type: string;
+        value: string;
+      }>;
+    };
   };
 }
 
@@ -63,7 +67,7 @@ export const fetchNftCollection = async (
   contractAddress: string,
   chain: SupportedChain,
   collectionName?: string
-): Promise<Nft[]> => {
+): Promise<(Nft & { rarityvalue: number })[]> => {
   if (!ALCHEMY_API_KEY) {
     throw new Error("Alchemy API key is not set!");
   }
@@ -85,10 +89,10 @@ export const fetchNftCollection = async (
     throw new Error("error fetching nfts");
   }
   const data = await res.json();
-  console.log("fetchNftCollection - Raw data:", data);
-
+  const nftsWithRarity = attachRarityScores(data.nfts as AlchemyNftResponse[]);
+  console.log(nftsWithRarity);
   // Map Alchemy API response to our enhanced Nft interface
-  const mappedNfts = data.nfts.map((nft: AlchemyNftResponse) => ({
+  const mappedNfts = nftsWithRarity.map((nft) => ({
     identifier: nft.tokenId,
     name: nft.name || `#${nft.tokenId}`,
     description:
@@ -101,13 +105,12 @@ export const fetchNftCollection = async (
     // Enhanced fields for JuliaOS agent
     tokenId: nft.tokenId,
     collection: collectionName || nft.contract.name || "Unknown Collection",
-    attributes: nft.rawMetadata?.attributes || [],
+    attributes: nft.raw?.metadata?.attributes || [],
     floorPrice: nft.contract?.openSeaMetadata?.floorPrice || 0,
-    totalSupply: nft.contract?.openSeaMetadata?.totalSupply || 10000,
+    totalSupply: Number(nft.contract?.openSeaMetadata?.totalSupply) || 10000,
     contractAddress: nft.contract.address,
     chain: chain,
+    rarityvalue: nft.rarityScore,
   }));
-
-  console.log("fetchNftCollection - Mapped NFTs:", mappedNfts);
   return mappedNfts;
 };

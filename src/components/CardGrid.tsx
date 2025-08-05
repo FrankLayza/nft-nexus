@@ -6,6 +6,8 @@ import Card from "./ui/Card";
 import SkeletonLoader from "./ui/SkeletonLoader";
 import { useEffect } from "react";
 import type { Nft } from "../utils/fetchNFT";
+import { ChevronRight, ChevronLeft } from "lucide-react";
+import Button from "./ui/Button";
 
 type CardGridProps = {
   className?: string;
@@ -14,7 +16,8 @@ type CardGridProps = {
 const CardGrid = ({ className }: CardGridProps) => {
   const [isSearching, setIsSearching] = useState(false);
 
-  const { selectedAddress, selectedChain, selectedCollection, setSelectedNFT } = useFilter();
+  const { selectedAddress, selectedChain, selectedCollection, setSelectedNFT } =
+    useFilter();
 
   // console.log(
   //   "CardGrid - selectedAddress:",
@@ -26,8 +29,14 @@ const CardGrid = ({ className }: CardGridProps) => {
   // );
 
   const { data, error, isLoading, refetch } = useQuery<Nft[]>({
-    queryKey: ["nft-collection", selectedAddress, selectedChain, selectedCollection],
-    queryFn: () => fetchNftCollection(selectedAddress, selectedChain, selectedCollection),
+    queryKey: [
+      "nft-collection",
+      selectedAddress,
+      selectedChain,
+      selectedCollection,
+    ],
+    queryFn: () =>
+      fetchNftCollection(selectedAddress, selectedChain, selectedCollection),
     enabled: !!selectedAddress && !!selectedChain,
     refetchOnWindowFocus: false,
     staleTime: 0,
@@ -103,11 +112,20 @@ const CardGrid = ({ className }: CardGridProps) => {
                   description={nft?.description}
                   price="Price"
                   AIEstimate="AI Estimate"
-                  priceValue={nft?.price ? `$${nft.price.toFixed(2)}` : "--"}
+                  priceValue={nft?.price ? `${nft.price.toFixed(2)} ETH` : "--"}
                   AIEstimateValue="--"
+                  RarityScore={nft?.rarityvalue}
                 />
               </div>
             ))}
+      </div>
+      <div className="flex justify-between">
+        <Button>
+          <ChevronLeft />
+        </Button>
+        <Button>
+          <ChevronRight />
+        </Button>
       </div>
     </div>
   );
