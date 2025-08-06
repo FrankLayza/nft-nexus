@@ -89,7 +89,8 @@ const DYORPage = () => {
                 <p className="text-sm leading-relaxed">{response}</p>
                 <div className="mt-4 flex items-center gap-2 text-xs">
                   <Badge className="text-gray-950">
-                    AI Confidence: {confidence}
+                    AI Confidence:{" "}
+                    {confidence !== null ? `${confidence}%` : "N/A"}
                   </Badge>
                   <span>•</span>
                   <span className="font-medium">
