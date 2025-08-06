@@ -10,32 +10,32 @@ const swarmData = {
 }
 const {count} = useFilter();
 
-const recentActivity = [
-    {
-        type: "volume_spike",
-        collection: "Cosmic Warriors",
-        change: "+340%",
-        time: "2m ago",
-    },
-    {
-        type: "new_mint",
-        collection: "Digital Dreams",
-        count: 150,
-        time: "5m ago",
-    },
-    {
-        type: "price_drop",
-        collection: "Cyber Cats",
-        change: "-15%",
-        time: "8m ago",
-    },
-    {
-        type: "whale_activity",
-        collection: "Pi Punks",
-        amount: "50 ETH",
-        time: "12m ago",
-    },
-]
+// const recentActivity = [
+//     {
+//         type: "volume_spike",
+//         collection: "Cosmic Warriors",
+//         change: "+340%",
+//         time: "2m ago",
+//     },
+//     {
+//         type: "new_mint",
+//         collection: "Digital Dreams",
+//         count: 150,
+//         time: "5m ago",
+//     },
+//     {
+//         type: "price_drop",
+//         collection: "Cyber Cats",
+//         change: "-15%",
+//         time: "8m ago",
+//     },
+//     {
+//         type: "whale_activity",
+//         collection: "Pi Punks",
+//         amount: "50 ETH",
+//         time: "12m ago",
+//     },
+// ]
     return (
         <div className="h-fit rounded-lg border border-gray-300 bg-white">
             <div className="flex flex-col py-6 px-4 pb-3 items-center">

@@ -223,7 +223,8 @@ export const FilterProvider = ({ children }: { children: ReactNode }) => {
         selectedRarity,
         filterByRarity,
         count,
-        increment
+        increment,
+        setCount
       }}
     >
       {children}
