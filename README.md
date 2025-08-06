@@ -207,6 +207,110 @@ The agent will analyze the NFT and return insights in the following format:
 }
 ```
 
+
+---
+
+### 🧠 Add: DYOR Researcher Agent
+
+The **DYOR Researcher Agent** provides intelligent, LLM-powered research insights for NFTs and cryptocurrency questions using plain language prompts.
+
+---
+
+### 🔧 Step 1: Create the Agent
+
+**Method:** `POST`  
+**URL:** `http://localhost:8052/api/v1/agents`  
+**Headers:**
+```
+Content-Type: application/json
+```
+
+**Body:**
+```json
+{
+  "id": "dyor-researcher-001",
+  "name": "DYOR Researcher Agent",
+  "description": "Performs intelligent DYOR (Do Your Own Research) analysis using LLM for NFT and cryptocurrency insights",
+  "blueprint": {
+    "tools": [
+      {
+        "name": "dyor_researcher",
+        "config": {
+          "analysis_depth": "comprehensive",
+          "api_key": "your-huggingface-api-key", 
+          "model_name": "mistralai/Mistral-7B-Instruct-v0.2:featherless-ai",
+          "temperature": 0.7,
+          "max_tokens": 1024
+        }
+      }
+    ],
+    "strategy": {
+      "name": "dyor_researcher",
+      "config": {
+        "analysis_depth": "comprehensive",
+        "api_key": "your-huggingface-api-key",
+        "model_name": "mistralai/Mistral-7B-Instruct-v0.2:featherless-ai",
+        "temperature": 0.7,
+        "max_tokens": 1024
+      }
+    },
+    "trigger": {
+      "type": "webhook",
+      "params": {}
+    }
+  }
+}
+```
+
+---
+
+### 🚀 Step 2: Set Agent to Running
+
+**Method:** `PUT`  
+**URL:** `http://localhost:8052/api/v1/agents/dyor-researcher-001/state`  
+**Headers:**
+```
+Content-Type: application/json
+```
+
+**Body:**
+```json
+{
+  "state": "running"
+}
+```
+
+---
+
+### ⚡ Step 3: Trigger the Agent with Prompt
+
+**Method:** `POST`  
+**URL:** `http://localhost:8052/api/v1/agents/dyor-researcher-001/webhook`  
+**Headers:**
+```
+Content-Type: application/json
+```
+
+**Body:**
+```json
+{
+  "text": "What do you think about Bored Ape Yacht Club?"
+}
+```
+
+---
+
+### 📊 Step 4: View Logs
+
+**Method:** `GET`  
+**URL:** `http://localhost:8052/api/v1/agents/dyor-researcher-001/logs`
+
+This endpoint will return the full reasoning logs and final output, including AI-generated insights, confidence levels, and recommendations.
+
+---
+
+
+
 ---
 
 ## ✅ Quick-start Checklist
