@@ -311,8 +311,6 @@ This endpoint will return the full reasoning logs and final output, including AI
 
 
 
----
-
 ## ✅ Quick-start Checklist
 
 | Step | Description                                          |
