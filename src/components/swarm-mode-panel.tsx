@@ -2,12 +2,12 @@ import { Activity,} from "lucide-react";
 import { useFilter } from "../contexts/FilterContext";
 const SwarmModePanel = () => {
 const swarmData = {
-    activeAgents: 47,
-    totalScans: 12847,
-    trendsDetected: 8,
-    volumeSpikes: 3,
-    newOpportunities: 5,
-}
+  activeAgents: 2,
+  totalScans: 12847,
+  trendsDetected: 8,
+  volumeSpikes: 3,
+  newOpportunities: 5,
+};
 const {count} = useFilter();
 
 // const recentActivity = [
