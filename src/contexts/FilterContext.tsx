@@ -135,7 +135,7 @@ const DefaultChain: Chain = "Ethereum";
 
 export interface FilterContextType {
   count: number
-  setCount: Dispatch<SetStateAction<number | null>>;
+  setCount: Dispatch<SetStateAction<number>>;
   selectedCollection: string;
   selectedNFT: Nft | null;
   setSelectedNFT: Dispatch<SetStateAction<Nft | null>>;
