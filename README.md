@@ -94,12 +94,12 @@ pnpm dev                       # start development server
 ## 🤖 JuliaOS Agent Management
 
 ### 📋 Prerequisites
-- Backend running on `http://localhost:8000` (default JuliaOS port)
+- Backend running on `http://localhost:8052` (default JuliaOS port)
 - Postman installed and configured
 
 ### 🔧 Step 1: Create an Agent
 
-**Method: POST** `http://localhost:8000/api/v1/agents`
+**Method: POST** `http://localhost:8052/api/v1/agents`
 
 **Headers:**
 ```
@@ -119,7 +119,7 @@ Content-Type: application/json
 
 ### 🚀 Step 2: Set Agent to Running State
 
-**Method: PUT** `http://localhost:8000/api/v1/agents/nft-analyzer-001/state`
+**Method: PUT** `http://localhost:8052/api/v1/agents/nft-analyzer-001/state`
 
 **Headers:**
 ```
@@ -135,7 +135,7 @@ Content-Type: application/json
 
 ### ⚡ Step 3: Trigger Agent Analysis
 
-**Method: POST** `http://localhost:8000/api/v1/agents/nft-analyzer-001/webhook`
+**Method: POST** `http://localhost:8052/api/v1/agents/nft-analyzer-001/webhook`
 
 **Headers:**
 ```
@@ -159,7 +159,7 @@ Content-Type: application/json
 
 ### 📊 Step 4: Retrieve Analysis Results
 
-**Method: GET** `http://localhost:8000/api/v1/agents/nft-analyzer-001/logs`
+**Method: GET** `http://localhost:8052/api/v1/agents/nft-analyzer-001/logs`
 
 This returns the agent's analysis logs, which are parsed by the frontend to extract structured results.
 
