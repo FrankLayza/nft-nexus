@@ -13,6 +13,7 @@ include("telegram/tool_send_message.jl")
 include("tool_scrape_article_text.jl")
 include("tool_summarize_for_post.jl")
 include("tool_nft_analyzer.jl")
+include("tool_dyor_researcher.jl")
 
 using ..CommonTypes: ToolSpecification
 
@@ -39,5 +40,6 @@ register_tool(TOOL_SEND_MESSAGE_SPECIFICATION)
 register_tool(TOOL_SCRAPE_ARTICLE_TEXT_SPECIFICATION)
 register_tool(TOOL_SUMMARIZE_FOR_POST_SPECIFICATION)
 register_tool(TOOL_NFT_ANALYZER_SPECIFICATION)
+register_tool(TOOL_DYOR_RESEARCHER_SPECIFICATION)
 
 end

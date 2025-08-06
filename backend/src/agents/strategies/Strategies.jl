@@ -9,6 +9,7 @@ include("telegram/strategy_moderator.jl")
 include("telegram/strategy_support.jl")
 include("strategy_ai_news_scraping.jl")
 include("strategy_nft_analyzer.jl")
+include("strategy_dyor_researcher.jl")
 
 using ..CommonTypes: StrategySpecification
 
@@ -31,5 +32,6 @@ register_strategy(STRATEGY_TELEGRAM_MODERATOR_SPECIFICATION)
 register_strategy(STRATEGY_TELEGRAM_SUPPORT_SPECIFICATION)
 register_strategy(STRATEGY_AI_NEWS_SCRAPING_SPECIFICATION)
 register_strategy(STRATEGY_NFT_ANALYZER_SPECIFICATION)
+register_strategy(STRATEGY_DYOR_RESEARCHER_SPECIFICATION)
 
 end
