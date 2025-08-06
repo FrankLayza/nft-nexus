@@ -165,6 +165,68 @@ class JuliaOSService {
   }
 
   /**
+   * Analyze a general prompt (DYOR agent)
+   */
+  async analyzePrompt(
+    prompt: string
+  ): Promise<{ confidence: string; analysis: string }> {
+    const agentId = "dyor-researcher-001";
+
+    try {
+      // Trigger DYOR agent
+      const triggerResponse = await fetch(
+        `${this.baseUrl}/agents/${agentId}/webhook`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ text: prompt }),
+        }
+      );
+
+      if (!triggerResponse.ok) {
+        throw new Error(`Agent trigger failed: ${triggerResponse.statusText}`);
+      }
+
+      // Wait for logs to populate
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
+      const logsResponse = await fetch(
+        `${this.baseUrl}/agents/${agentId}/logs`
+      );
+
+      if (!logsResponse.ok) {
+        throw new Error(`Failed to get logs: ${logsResponse.statusText}`);
+      }
+
+      const logsData: AgentLog = await logsResponse.json();
+      const logs = logsData.logs;
+
+      const confidenceLine = logs.find((line) =>
+        line.startsWith("Confidence:")
+      );
+      const confidence = confidenceLine
+        ? confidenceLine.split(":")[1].trim()
+        : "Unknown";
+
+      const analysisStart = logs.findIndex((line) =>
+        line.startsWith("Analysis:")
+      );
+      const analysisLines = logs.slice(analysisStart + 1);
+      const analysisText = analysisLines.join("\n").trim();
+
+      return {
+        confidence,
+        analysis: analysisText || "No analysis found.",
+      };
+    } catch (error) {
+      console.error("DYOR agent analysis failed:", error);
+      throw error;
+    }
+  }
+
+  /**
    * Get agent status
    */
   async getAgentStatus(): Promise<boolean> {
