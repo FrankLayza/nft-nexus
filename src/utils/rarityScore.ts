@@ -36,7 +36,6 @@ export function calculateRarityScore(
 ): number {
   let score = 0;
   const attributes = nft.raw?.metadata?.attributes || [];
-  console.log("NFT Attributes", attributes);
   for (const { trait_type, value } of attributes) {
     const freq = frequencies[trait_type]?.[value] || 1;
     score += 1 / freq;

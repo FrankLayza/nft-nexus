@@ -95,7 +95,7 @@ export const fetchNftCollection = async (
   }
   const data = await res.json();
   const nftsWithRarity = attachRarityScores(data.nfts as AlchemyNftResponse[]);
-  console.log(nftsWithRarity);
+  
   // Map Alchemy API response to our enhanced Nft interface
   const mappedNfts = nftsWithRarity.map((nft) => ({
     identifier: nft.tokenId,

@@ -1,0 +1,27 @@
+{
+	"id": "telegram-agent",
+	"name": "Telegram Moderator Agent",
+	"description": "Checks for profanity and bans users",
+	"blueprint": {
+		"tools": [
+			{
+				"name": "detect_swearing",
+				"config": {}
+			},
+			{
+				"name": "ban_user",
+				"config": {
+					"api_token": "TELEGRAM_TOKEN"
+				}
+			}
+		],
+		"strategy": {
+			"name": "telegram_moderator",
+			"config": {}
+		},
+		"trigger": {
+			"type" : "webhook",
+			"params": {}
+		}
+	}
+}

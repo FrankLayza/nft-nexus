@@ -100,7 +100,6 @@ class JuliaOSService {
     }
   }
 
-
   /**
    * Parse the analysis result from agent logs
    */
@@ -111,51 +110,59 @@ class JuliaOSService {
     // Step 1: Identify all indexes where this NFT's analysis started
     const startIndexes: number[] = logs
       .map((line, index) => ({ line, index }))
-      .filter(({ line }) =>
-        line.includes(`Starting intelligent NFT analysis for collection: ${input.collection}`) &&
-        line.includes(`token: ${input.token_id}`)
+      .filter(
+        ({ line }) =>
+          line.includes(
+            `Starting intelligent NFT analysis for collection: ${input.collection}`
+          ) && line.includes(`token: ${input.token_id}`)
       )
       .map(({ index }) => index);
-  
+
     if (startIndexes.length === 0) {
       throw new Error("No matching analysis logs found for this NFT.");
     }
-  
+
     // Step 2: Pick the *most recent* matching analysis block
     const startIndex = startIndexes[startIndexes.length - 1];
-  
+
     // Step 3: Slice from the start of the block to the end
     // (assumes log for an analysis always ends with "Key insights:")
     const relevantLogs = logs.slice(startIndex);
     const endIndex = relevantLogs.findIndex((line) =>
       line.includes("Key insights:")
     );
-  
+
     if (endIndex === -1) {
       throw new Error("Incomplete log block. Could not find 'Key insights'.");
     }
-  
+
     const analysisBlock = relevantLogs.slice(0, endIndex + 1);
-  
+
     // Step 4: Extract fields from the matched block
     const getField = (prefix: string) =>
-      analysisBlock.find((line) => line.startsWith(prefix))?.split(":")[1].trim() || "";
-  
+      analysisBlock
+        .find((line) => line.startsWith(prefix))
+        ?.split(":")[1]
+        .trim() || "";
+
     return {
       collection: input.collection,
       token_id: input.token_id,
       rarity_score: parseFloat(getField("Rarity score")),
       market_sentiment: getField("Market sentiment"),
-      price_prediction: parseFloat(getField("Price prediction").replace(" ETH", "")),
+      price_prediction: parseFloat(
+        getField("Price prediction").replace(" ETH", "")
+      ),
       risk_level: getField("Risk level"),
       recommendation: getField("Recommendation"),
       confidence: parseFloat(getField("Confidence").replace("%", "")),
       insights: analysisBlock
-        .filter((line) => line.trim().startsWith("•") || line.trim().startsWith("-"))
+        .filter(
+          (line) => line.trim().startsWith("•") || line.trim().startsWith("-")
+        )
         .map((line) => line.replace(/^[-•]\s*/, "").trim()),
     };
   }
-  
 
   /**
    * Get agent status
