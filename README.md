@@ -109,11 +109,31 @@ Content-Type: application/json
 **Body (JSON):**
 ```json
 {
-  "name": "nft-analyzer-001",
-  "description": "AI agent for NFT analysis and price prediction",
-  "instructions": "You are an expert NFT analyst. Analyze the provided NFT data including collection, token ID, attributes, floor price, and total supply. Provide insights on rarity, market sentiment, price predictions, risk assessment, and buy/sell recommendations.",
-  "model": "gpt-4",
-  "tools": []
+  "id": "nft-analyzer-001",
+  "name": "NFT Analyzer Agent",
+  "description": "Analyzes NFTs using LLM for intelligent rarity scoring and valuation",
+  "blueprint": {
+    "tools": [
+      {
+        "name": "nft_analyzer",
+        "config": {
+          "analysis_depth": "comprehensive",
+          "api_key": "YOUR_HUGGINGFACE_API_KEY",
+          "model_name": "mistralai/Mistral-7B-Instruct-v0.2:featherless-ai",
+          "temperature": 0.7,
+          "max_tokens": 512
+        }
+      }
+    ],
+    "strategy": {
+      "name": "nft_analyzer",
+      "config": {}
+    },
+    "trigger": {
+      "type": "webhook",
+      "params": {}
+    }
+  }
 }
 ```
 
