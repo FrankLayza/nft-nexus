@@ -7,7 +7,7 @@ import { useSidebar } from "../contexts/SidebarContext";
 import { useSearchQuery } from "../contexts/SearchQueryContext";
 import { useFilter } from "../contexts/FilterContext";
 import type { Chain } from "../contexts/FilterContext";
-
+import { rarityFilter } from "../contexts/FilterContext";
 const Sidebar = ({ isOpen }: { isOpen: boolean }) => {
   const blockchainOptions: { name: Chain; icon?: string }[] = [
     { name: "Ethereum", icon: "⟠" },
@@ -23,12 +23,13 @@ const Sidebar = ({ isOpen }: { isOpen: boolean }) => {
     updateSelectedChain,
     updateSelectedCollection,
     resetFilter,
+    selectedRarity,
+    setSelectedRarity,
   } = useFilter();
   const { sidebarOpen, setSidebarOpen } = useSidebar();
   const { searchQuery, setSearchQuery } = useSearchQuery();
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState<string | null>(null);
-  const [progressValue, setProgressValue] = useState(0);
   const [hasNavigated, setHasNavigated] = useState(false);
 
   // Convert selectedChain (lowercase) to display format (capitalized)
@@ -76,26 +77,11 @@ const Sidebar = ({ isOpen }: { isOpen: boolean }) => {
             className="w-full"
           />
         </div>
-        <div>
-          <h3 className="text-sm font-medium mb-2">Price Range</h3>
-          <input
-            type="range"
-            min="0"
-            max="100"
-            value={progressValue}
-            onChange={(e) => setProgressValue(parseFloat(e.target.value))}
-            className="w-full appearance-none h-2 rounded-full [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-3 [&::-webkit-slider-thumb]:border-black"
-            style={{
-              background: `linear-gradient(to right, lightgray ${progressValue}%, black ${progressValue}%)`,
-            }}
-          />
-          <div className="flex items-center justify-between text-sm text-gray-500">
-            <span>{progressValue} ETH</span>
-            <span>100+ ETH</span>
-          </div>
-        </div>
+       
       </div>
       <div className="space-y-6 w-full mt-6">
+
+        {/* Blockchain section  */}
         <div
           tabIndex={0}
           className={`collapse collapse-arrow  ${
@@ -146,6 +132,8 @@ const Sidebar = ({ isOpen }: { isOpen: boolean }) => {
             ))}
           </div>
         </div>
+
+        {/* Collection section  */}
         <div
           tabIndex={0}
           className={`collapse collapse-arrow ${
@@ -193,6 +181,7 @@ const Sidebar = ({ isOpen }: { isOpen: boolean }) => {
             ))}
           </div>
         </div>
+        
         <div
           tabIndex={0}
           className={`collapse collapse-arrow ${
@@ -208,49 +197,42 @@ const Sidebar = ({ isOpen }: { isOpen: boolean }) => {
             Rarity
           </div>
           <div className="collapse-content">
-            <div className="flex items-center space-x-3 mb-2">
-              <input type="checkbox" id="all" defaultChecked />
-              <label
-                htmlFor="legendary"
-                className="text-sm cursor-pointer flex items-center"
+              {rarityFilter.map((rarity: string) => (
+              <div
+                key={rarity}
+                className="flex items-center justify-between mb-2"
               >
-                <span className="w-3 h-3 bg-yellow-400 rounded-full mr-2"></span>
-                Legendary (0.1%)
-              </label>
-            </div>
-            <div className="flex items-center space-x-3 mb-2">
-              <input type="checkbox" id="on-sale" />
-              <label
-                htmlFor="epic"
-                className="text-sm cursor-pointer flex items-center"
-              >
-                <span className="w-3 h-3 bg-purple-400 rounded-full mr-2"></span>
-                Epic (1%)
-              </label>
-            </div>
-            <div className="flex items-center space-x-3 mb-2">
-              <input type="checkbox" id="auction" />
-              <label
-                htmlFor="rare"
-                className="text-sm cursor-pointer flex items-center"
-              >
-                <span className="w-3 h-3 bg-blue-400 rounded-full mr-2"></span>
-                Rare (5%)
-              </label>
-            </div>
-            <div className="flex items-center space-x-3">
-              <input type="checkbox" id="new-listing" />
-              <label
-                htmlFor="common"
-                className="text-sm cursor-pointer flex items-center"
-              >
-                <span className="w-3 h-3 bg-gray-400 rounded-full mr-2"></span>
-                Common (93.9%)
-              </label>
-            </div>
+                <div className="flex items-center space-x-3">
+                  <input
+                    type="radio"
+                    name="collection"
+                    id={rarity}
+                    checked={selectedRarity === rarity}
+                    className={`appearance-none w-4 h-4 rounded-full border border-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors duration-150
+                         ${
+                           selectedRarity === rarity
+                             ? "bg-blue-500 border-blue-500 ring-1 ring-blue-300"
+                             : ""
+                         }
+                        `}
+                    value={rarity}
+                    onChange={() => setSelectedRarity(rarity)}
+                  />
+                  <label
+                    htmlFor={rarity}
+                    className="flex items-center space-x-2 cursor-pointer"
+                  >
+                    <span className="text-sm">{rarity}</span>
+                  </label>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
+
+
+      {/* DYOR SECTION  */}
       <div
         onClick={() => navigate("/dyor")}
         className="w-full mt-6 flex flex-col items-center"

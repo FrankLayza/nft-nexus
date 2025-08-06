@@ -16,10 +16,9 @@ const Navbar = () => {
           </div>
 
           <nav className="hidden xl:flex items-center space-x-5">
-            <Button className="btn btn-ghost"><Link to={'/'}>EXPLORE</Link></Button>
-            <Button className="btn btn-ghost"><Link to={'/collection'}>COLLECTION</Link></Button>
+            <Link to={'/'}><Button className="btn btn-ghost">EXPLORE</Button></Link>
+            <Link to={'/collection'}><Button className="btn btn-ghost">COLLECTION</Button></Link>
             <Button className="btn btn-ghost">AI AGENTS</Button>
-            <Button className="btn btn-ghost">ANALYTICS</Button>
           </nav>
 
           {/* <div className="hidden xl:flex">

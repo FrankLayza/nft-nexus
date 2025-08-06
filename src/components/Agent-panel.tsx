@@ -1,15 +1,24 @@
-import { Bot, Brain, Zap, TrendingUp, Target, AlertTriangle, Sparkles } from "lucide-react";
+import {
+  Bot,
+  Brain,
+  Zap,
+  TrendingUp,
+  AlertTriangle,
+  Sparkles,
+} from "lucide-react";
 import { useState } from "react";
-import Button from "./ui/Button";
 import Badge from "./ui/Badge";
 import Separator from "./ui/Separator";
 import Progress from "./ui/Progress";
 import { useFilter } from "../contexts/FilterContext";
 import { juliaOSService } from "../services/juliaOSService";
-import type { NFTAnalysisResult, NFTAnalysisInput } from "../services/juliaOSService";
+import type {
+  NFTAnalysisResult,
+  NFTAnalysisInput,
+} from "../services/juliaOSService";
 
 const AgentPanel = () => {
-  const { selectedNFT } = useFilter();
+  const { selectedNFT, increment } = useFilter();
   const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false);
   const [analysisResult, setAnalysisResult] =
     useState<NFTAnalysisResult | null>(null);
@@ -94,7 +103,10 @@ const AgentPanel = () => {
                 </div>
               </div>
               <button
-                onClick={analyzeNFTWithAgent}
+                onClick={() => {
+                  analyzeNFTWithAgent();
+                  increment();
+                }}
                 disabled={isAnalyzing}
                 className="btn btn-neutral text-white w-full disabled:pointer-events-none"
               >
@@ -157,8 +169,8 @@ const AgentPanel = () => {
                   <div className="grid grid-cols-2 gap-3 text-sm">
                     <div>
                       <p className="text-gray-600">Price Target</p>
-                      <p className="font-bold text-green-600">
-                        {analysisResult?.price_prediction || "0"} ETH
+                      <p className="font-bold text-green-600 text-sm">
+                        {analysisResult?.price_prediction.toFixed(2) || "0"} ETH
                       </p>
                     </div>
                     <div>
@@ -199,7 +211,7 @@ const AgentPanel = () => {
                   </div>
                   <div className="flex items-center justify-between font-semibold text-sm">
                     <span className="text-gray-600">Collection</span>
-                    <span className="font-medium">
+                    <span className="font-medium text-xs">
                       {analysisResult?.collection || "Unknown"}
                     </span>
                   </div>
@@ -253,20 +265,7 @@ const AgentPanel = () => {
                     </div>
                   )}
                 </div>
-                <Separator />
-                <div className="space-y-2 w-full">
-                  <h4 className="font-medium text-sm">Quick Actions</h4>
-                  <div className="grid grid-cols-2 gap-2">
-                    <Button className="flex items-center text-xs font-medium bg-transparent rounded-full">
-                      <Target className="w-7 h-7 mr-1" />
-                      Set Alert
-                    </Button>
-                    <Button className="flex items-center text-xs font-medium bg-transparent rounded-full">
-                      <TrendingUp className="w-7 h-7 mr-1" />
-                      Track Price
-                    </Button>
-                  </div>
-                </div>
+
                 {analysisResult?.risk_level === "high" && (
                   <div className="p-3 bg-red-50 border border-red-200 rounded-lg w-full my-4">
                     <div className="flex items-center gap-2 text-red-800">
@@ -290,6 +289,6 @@ const AgentPanel = () => {
       </div>
     </div>
   );
-}
- 
+};
+
 export default AgentPanel;

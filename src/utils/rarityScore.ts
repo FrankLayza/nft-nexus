@@ -56,6 +56,5 @@ export function rarityDisplay(score: number) {
   if (score >= 100) return { tier: "Legendary", icon: "🦄" };
   if (score >= 60) return { tier: "Epic", icon: "⚔️" };
   if (score >= 30) return { tier: "Rare", icon: "💎" };
-  if (score >= 15) return { tier: "Uncommon", icon: "✨" };
   return { tier: "Common", icon: "😂" };
 }

@@ -17,18 +17,9 @@ const CardGrid = ({ className }: CardGridProps) => {
   const [isSearching, setIsSearching] = useState(false);
   const [pageKey, setPageKey] = useState<string | null>(null);
   const [prevKeys, setPrevKeys] = useState<string[]>([]);
-
-  const { selectedAddress, selectedChain, selectedCollection, setSelectedNFT } =
+  const { selectedAddress, selectedChain, selectedCollection, setSelectedNFT, filterByRarity } =
     useFilter();
 
-  // console.log(
-  //   "CardGrid - selectedAddress:",
-  //   selectedAddress,
-  //   "selectedChain:",
-  //   selectedChain,
-  //   "selectedCollection:",
-  //   selectedCollection
-  // );
 
 const { data, error, isLoading, refetch } = useQuery({
   queryKey: ["nft-collection", selectedAddress, selectedChain, selectedCollection, pageKey],
@@ -79,12 +70,6 @@ const handlePrev = () => {
   // Force refetch when address or chain changes
   useEffect(() => {
     if (selectedAddress && selectedChain) {
-      // console.log(
-      //   "CardGrid - Triggering refetch for:",
-      //   selectedAddress,
-      //   selectedChain,
-      //   selectedCollection
-      // );
       refetch();
     }
   }, [selectedAddress, selectedChain, selectedCollection, refetch]);
@@ -98,16 +83,6 @@ const handlePrev = () => {
             {data?.nfts.length || 0} items
           </div>
         </div>
-        <div className="flex items-center gap-3">
-          <select defaultValue={"Recently Listed"} className="select">
-            <option disabled={true}>Recently Listed</option>
-            <option value="price-low-high">Price: Low to High</option>
-            <option value="price-high-low">Price: High to Low</option>
-            <option value="ai-estimated">AI Estimated</option>
-            <option value="most-viewed">Most Viewed</option>
-            <option value="rarity-score">Rarity Score</option>
-          </select>
-        </div>
       </div>
 
       <div
@@ -117,16 +92,14 @@ const handlePrev = () => {
           ? [...Array(6)].map((_, index) => (
               <SkeletonLoader key={index} isSearching={true} />
             ))
-          : data?.nfts.map((nft: Nft) => (
+          : filterByRarity(data?.nfts || []).map((nft: Nft) => (
               <div key={nft.identifier} onClick={() => setSelectedNFT(nft)}>
                 <Card
                   image={nft?.image}
                   title={nft?.name}
                   description={nft?.description}
                   price="Price"
-                  AIEstimate="AI Estimate"
                   priceValue={nft?.price ? `${nft.price.toFixed(2)} ETH` : "--"}
-                  AIEstimateValue="--"
                   RarityScore={nft?.rarityvalue}
                 />
               </div>

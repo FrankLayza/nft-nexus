@@ -124,18 +124,31 @@ export const collectionsByChain: Record<Chain, string[]> = {
   ],
 };
 
+export const rarityFilter: string[] = [
+  'Legendary',
+  'Epic',
+  'Rare',
+  'Common',
+]
+
 const DefaultChain: Chain = "Ethereum";
 
 export interface FilterContextType {
+  count: number
+  setCount: Dispatch<SetStateAction<number | null>>;
   selectedCollection: string;
   selectedNFT: Nft | null;
   setSelectedNFT: Dispatch<SetStateAction<Nft | null>>;
+  selectedRarity: string | null;
+  setSelectedRarity: Dispatch<SetStateAction<string | null>>;
   availableCollections: string[];
   selectedAddress: string;
   selectedChain: SupportedChain;
   updateSelectedChain: (chain: Chain) => void;
   updateSelectedCollection: (collection: string) => void;
   resetFilter: () => void;
+  filterByRarity: (nfts: Nft[]) => Nft[]
+  increment: () => void;
 }
 
 const FilterContext = createContext<FilterContextType | undefined>(undefined);
@@ -154,6 +167,19 @@ export const FilterProvider = ({ children }: { children: ReactNode }) => {
   const [selectedChain, setSelectedChain] = useState<SupportedChain>(
     collectionInfoMap[collectionsByChain[DefaultChain][0]].chain
   );
+  const [selectedRarity, setSelectedRarity] = useState<string | null>(null)
+  const [count, setCount] = useState<number>(0)
+ const filterByRarity = (nfts: Nft[]): Nft[] => {
+  if (!selectedRarity) return nfts; 
+  return nfts.filter(nft =>
+    nft.rarityvalue?.tier.toLowerCase() === selectedRarity.toLowerCase()
+  );
+};
+
+ const increment = (): void => {
+  setCount((prev) => (prev ?? 0) + 1);
+};
+
 
   const updateSelectedChain = (chain: Chain) => {
     setAvailableCollections(collectionsByChain[chain]);
@@ -178,6 +204,7 @@ export const FilterProvider = ({ children }: { children: ReactNode }) => {
     setSelectedChain(
       collectionInfoMap[collectionsByChain[DefaultChain][0]].chain
     );
+    setSelectedRarity(null)
   };
 
   return (
@@ -192,6 +219,11 @@ export const FilterProvider = ({ children }: { children: ReactNode }) => {
         updateSelectedChain,
         updateSelectedCollection,
         resetFilter,
+        setSelectedRarity,
+        selectedRarity,
+        filterByRarity,
+        count,
+        increment
       }}
     >
       {children}

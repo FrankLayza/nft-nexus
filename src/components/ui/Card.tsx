@@ -1,6 +1,6 @@
 export type RarityScoreType = {
   tier: string;
-  icon: string; // Add other properties if needed
+  icon: string; 
 };
 
 type CardProps = {
@@ -8,9 +8,7 @@ type CardProps = {
   description: string;
   image: string;
   price: string;
-  AIEstimate: string;
   priceValue: string | number;
-  AIEstimateValue: string | number;
   RarityScore: RarityScoreType;
 };
 
@@ -19,9 +17,7 @@ const Card = ({
   description,
   image,
   price,
-  AIEstimate,
   priceValue,
-  AIEstimateValue,
   RarityScore,
 }: CardProps) => {
   return (
@@ -43,11 +39,9 @@ const Card = ({
         <div className="py-2">
           <div className="flex justify-between items-center text-xs text-gray-500 capitalize">
             <p>{price}</p>
-            <p>{AIEstimate}</p>
           </div>
           <div className="flex justify-between items-center text-sm tracking-wide">
             <p className="font-bold">{priceValue ? priceValue : 0.00}</p>
-            <p className="font-bold text-green-600">{AIEstimateValue}</p>
           </div>
         </div>
 
