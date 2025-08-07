@@ -119,7 +119,7 @@ Content-Type: application/json
         "config": {
           "analysis_depth": "comprehensive",
           "api_key": "YOUR_HUGGINGFACE_API_KEY",
-          "model_name": "mistralai/Mistral-7B-Instruct-v0.2:featherless-ai",
+          "model_name": "deepseek-ai/DeepSeek-R1:novita",
           "temperature": 0.7,
           "max_tokens": 512
         }
@@ -238,7 +238,7 @@ Content-Type: application/json
         "config": {
           "analysis_depth": "comprehensive",
           "api_key": "your-huggingface-api-key", 
-          "model_name": "mistralai/Mistral-7B-Instruct-v0.2:featherless-ai",
+          "model_name": "deepseek-ai/DeepSeek-R1:novita",
           "temperature": 0.7,
           "max_tokens": 1024
         }
@@ -249,7 +249,7 @@ Content-Type: application/json
       "config": {
         "analysis_depth": "comprehensive",
         "api_key": "your-huggingface-api-key",
-        "model_name": "mistralai/Mistral-7B-Instruct-v0.2:featherless-ai",
+        "model_name": "deepseek-ai/DeepSeek-R1:novita",
         "temperature": 0.7,
         "max_tokens": 1024
       }
