@@ -2,6 +2,7 @@ import { useState } from "react";
 import Badge from "./ui/Badge";
 import { Brain } from "lucide-react";
 import { juliaOSService } from "../services/juliaOSService";
+import { marked } from "marked";
 
 const DYORPage = () => {
   const [prompt, setPrompt] = useState("");
@@ -9,6 +10,11 @@ const DYORPage = () => {
   const [confidence, setConfidence] = useState<number | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [duration, setDuration] = useState<number | null>(null);
+
+  const cleanOutput = (text: string) => {
+    // Remove <think> tags and contents inside
+    return text.replace(/<think>[\s\S]*?<\/think>/gi, "").trim();
+  };
 
   const handleAnalyze = async () => {
     if (!prompt.trim()) return;
@@ -22,8 +28,11 @@ const DYORPage = () => {
       const start = Date.now();
       const result = await juliaOSService.analyzePrompt(prompt);
       const elapsed = (Date.now() - start) / 1000;
+      const cleanResponse = cleanOutput(result.analysis);
 
-      setResponse(result.analysis);
+      setResponse(cleanResponse);
+
+      //   setResponse(result.analysis);
       setConfidence(result.confidence);
       setDuration(elapsed);
     } catch (err: any) {
@@ -86,9 +95,12 @@ const DYORPage = () => {
                 </span>
               </div>
 
-              <div className="text-gray-700 text-sm leading-relaxed whitespace-pre-line">
-                {response}
-              </div>
+              <div
+                className="prose prose-sm text-gray-800 max-w-none leading-5 whitespace-pre-line"
+                dangerouslySetInnerHTML={{
+                  __html: marked.parse(response || ""),
+                }}
+              />
 
               <div className="mt-4 flex items-center gap-2 text-xs text-gray-600">
                 <Badge className="text-gray-950">
