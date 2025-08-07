@@ -30,6 +30,12 @@ export interface AgentLog {
   logs: string[];
 }
 
+export interface DyorAnalysisResult {
+  prompt: string;
+  confidence: number;
+  analysis: string;
+}
+
 const resultsCache: Record<string, NFTAnalysisResult> = {};
 
 class JuliaOSService {
@@ -167,20 +173,15 @@ class JuliaOSService {
   /**
    * Analyze a general prompt (DYOR agent)
    */
-  async analyzePrompt(
-    prompt: string
-  ): Promise<{ confidence: string; analysis: string }> {
+  async analyzePrompt(prompt: string): Promise<DyorAnalysisResult> {
     const agentId = "dyor-researcher-001";
 
     try {
-      // Trigger DYOR agent
       const triggerResponse = await fetch(
         `${this.baseUrl}/agents/${agentId}/webhook`,
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ text: prompt }),
         }
       );
@@ -189,7 +190,6 @@ class JuliaOSService {
         throw new Error(`Agent trigger failed: ${triggerResponse.statusText}`);
       }
 
-      // Wait for logs to populate
       await new Promise((resolve) => setTimeout(resolve, 2000));
 
       const logsResponse = await fetch(
@@ -201,29 +201,55 @@ class JuliaOSService {
       }
 
       const logsData: AgentLog = await logsResponse.json();
-      const logs = logsData.logs;
-
-      const confidenceLine = logs.find((line) =>
-        line.startsWith("Confidence:")
-      );
-      const confidence = confidenceLine
-        ? confidenceLine.split(":")[1].trim()
-        : "Unknown";
-
-      const analysisStart = logs.findIndex((line) =>
-        line.startsWith("Analysis:")
-      );
-      const analysisLines = logs.slice(analysisStart + 1);
-      const analysisText = analysisLines.join("\n").trim();
-
-      return {
-        confidence,
-        analysis: analysisText || "No analysis found.",
-      };
+      return this.parseLatestDyorLogBlock(logsData.logs);
     } catch (error) {
       console.error("DYOR agent analysis failed:", error);
       throw error;
     }
+  }
+
+  private parseLatestDyorLogBlock(logs: string[]): DyorAnalysisResult {
+    // Finding all indexes of "Starting DYOR analysis for: ..."
+    const promptStartIndexes = logs
+      .map((line, index) => ({ line, index }))
+      .filter(({ line }) => line.startsWith("Starting DYOR analysis for: "))
+      .map(({ index }) => index);
+
+    if (promptStartIndexes.length === 0) {
+      throw new Error("No DYOR analysis blocks found.");
+    }
+
+    // Get the most recent prompt start index
+    const startIndex = promptStartIndexes[promptStartIndexes.length - 1];
+    const promptLine = logs[startIndex];
+    const prompt = promptLine
+      .replace('Starting DYOR analysis for: "', "")
+      .replace(/"$/, "");
+
+    // Slice from the start index to the end of the logs
+    // Assuming the analysis ends with "Confidence: ..."
+    const logBlock = logs.slice(startIndex);
+    const confidenceLine = logBlock.find((line) =>
+      line.startsWith("Confidence:")
+    );
+
+    const confidence = confidenceLine
+      ? parseFloat(
+          confidenceLine.replace("Confidence:", "").replace("%", "").trim()
+        )
+      : NaN;
+
+    const analysisStart = logBlock.findIndex(
+      (line) => line.startsWith(" Title:") || line.startsWith(" I'm an expert")
+    );
+
+    const analysisLines = logBlock.slice(analysisStart).join("\n").trim();
+
+    return {
+      prompt,
+      confidence,
+      analysis: analysisLines,
+    };
   }
 
   /**
