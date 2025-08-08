@@ -3,7 +3,7 @@ WORKDIR /app
 
 COPY Project.toml ./
 COPY src/ ./src/
-# COPY .env ./
+COPY .env ./
 
 RUN julia -e "\
 import Pkg; \
