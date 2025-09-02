@@ -29,6 +29,9 @@ export async function analyzeNFT(input) {
   `;
 
   try {
+    if(!HF_API_KEY){
+        throw new Error("Hugging Face API key is missing")
+    }
     const response = await fetch(HF_URL, {
       headers,
       method: "POST",
