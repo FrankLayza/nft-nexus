@@ -11,11 +11,11 @@ import Badge from "./ui/Badge";
 import Separator from "./ui/Separator";
 import Progress from "./ui/Progress";
 import { useFilter } from "../contexts/FilterContext";
-import { juliaOSService } from "../services/juliaOSService";
+import { juliaOSService } from "../services/NFTService";
 import type {
   NFTAnalysisResult,
   NFTAnalysisInput,
-} from "../services/juliaOSService";
+} from "../services/NFTService";
 
 const AgentPanel = () => {
   const { selectedNFT, increment } = useFilter();

@@ -45,7 +45,7 @@ class JuliaOSService {
   constructor() {
     // Update this URL to match your JuliaOS backend
     this.baseUrl = "/api/api/v1";
-    this.agentId = "nft-analyzer-001";
+    this.agentId = "analyze-nft";
   }
 
   /**
