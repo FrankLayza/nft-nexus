@@ -1,3 +1,5 @@
 import express from 'express'
+import { analyzeNFTHandler } from '../controllers/nftController'
+const router = express.route()
 
-const route = express.route()
+router.post("/analyze-nft", analyzeNFTHandler)
