@@ -21,7 +21,7 @@ export async function analyzeNFT(input) {
   Total Supply: ${input.total_supply}
 
   Please return a JSON object with:
-  - rarity_score (number)
+  - rarity_score (number) range of 0-10
   - market_sentiment ("bearish" | "neutral" | "bullish")
   - price_prediction (ETH number)
   - risk_level ("low" | "medium" | "high")
