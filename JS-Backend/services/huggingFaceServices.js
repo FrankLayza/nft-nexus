@@ -14,7 +14,9 @@ export async function analyzeNFT(input) {
   Analyze the following NFT:
   Collection: ${input.collection}
   Token ID: ${input.token_id}
-  Attributes: ${input.attributes.map(a => `${a.trait_type}: ${a.value}`).join(", ")}
+  Attributes: ${input.attributes
+    .map((a) => `${a.trait_type}: ${a.value}`)
+    .join(", ")}
   Floor Price: ${input.floor_price} ETH
   Total Supply: ${input.total_supply}
 
@@ -29,8 +31,8 @@ export async function analyzeNFT(input) {
   `;
 
   try {
-    if(!HF_API_KEY){
-        throw new Error("Hugging Face API key is missing")
+    if (!HF_API_KEY) {
+      throw new Error("Hugging Face API key is missing");
     }
     const response = await fetch(HF_URL, {
       headers,
@@ -56,11 +58,18 @@ export async function analyzeNFT(input) {
     // Most HF chat models return text inside choices[0].message.content
     const rawText = data?.choices?.[0]?.message?.content || "";
 
+    //remove markdown
+    const cleanedResponse = rawText.replace(/```json|```/g, "").trim();
+
     let parsed;
     try {
-      parsed = JSON.parse(rawText); // Try to parse JSON directly
-    } catch {
-      parsed = { raw_response: rawText }; // Fallback if it’s not valid JSON
+      parsed = JSON.parse(cleanedResponse); // Try to parse the JSON(cleanedResponse) directly
+    } catch (e) {
+      console.error(
+        `Failed to get a response from HuggingFace`,
+        cleanedResponse
+      );
+      parsed = { raw_response: rawText }; // Fallback if it is not a valid JSON
     }
 
     return parsed;

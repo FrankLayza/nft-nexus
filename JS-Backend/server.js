@@ -1,20 +1,19 @@
 import express from "express";
-import cors from "cors"
-import dotenv from "dotenv"
-import { setupSwagger } from "./swagger";
-import nftRoutes from "./routes/nftRoutes.js"
+import cors from "cors";
+import dotenv from "dotenv";
+import { setupSwagger } from "./swagger.js";
+import nftRoutes from "./routes/nftRoutes.js";
 
-dotenv.config()
+dotenv.config();
 const app = express();
 const PORT = 4500;
 
 app.use(express.json());
-app.use(cors())
+app.use(cors());
 
+setupSwagger(app);
 
-setupSwagger(app)
-
-app.use("/api/v1", nftRoutes)
+app.use("/api/v1", nftRoutes);
 app.listen(PORT, () => {
   console.log(`server started on  localhost:${PORT}`);
 });

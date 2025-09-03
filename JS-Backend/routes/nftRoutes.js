@@ -1,6 +1,6 @@
-import express from 'express'
-import { analyzeNFTHandler } from '../controllers/nftController'
-const router = express.Router()
+import express from "express";
+import { analyzeNFTHandler } from "../controllers/nftController.js";
+const router = express.Router();
 
 /**
  * @swagger
@@ -39,4 +39,5 @@ const router = express.Router()
  *         description: Server error
  */
 
-router.post("/analyze-nft", analyzeNFTHandler)
+router.post("/analyze-nft", analyzeNFTHandler);
+export default router;

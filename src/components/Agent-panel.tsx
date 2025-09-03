@@ -6,7 +6,7 @@ import {
   AlertTriangle,
   Sparkles,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Badge from "./ui/Badge";
 import Separator from "./ui/Separator";
 import Progress from "./ui/Progress";
@@ -23,6 +23,11 @@ const AgentPanel = () => {
   const [analysisResult, setAnalysisResult] =
     useState<NFTAnalysisResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setAnalysisResult(null)
+    setError(null)
+  }, [selectedNFT])
 
   // Sanitizing the nft attributes before passing data to julia
   function sanitizeAttributes(
