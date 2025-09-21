@@ -2,6 +2,7 @@ import { useState } from "react";
 import Badge from "./ui/Badge";
 import { Brain } from "lucide-react";
 import { juliaOSService } from "../services/NFTService";
+import type {  DyorAnalysisResult } from "../services/NFTService";
 import { marked } from "marked";
 
 const DYORPage = () => {

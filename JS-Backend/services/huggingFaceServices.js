@@ -98,6 +98,38 @@ export async function analyzeNFT(input) {
 }
 
 export async function analyzePrompt(input) {
+  const HF_URL = "https://router.huggingface.co/v1/chat/completions";
+  const HF_API_KEY = process.env.HUGGING_FACE_API_KEY;
+  if (!HF_API_KEY) {
+    throw new Error("Hugging Face API key is missing");
+  }
+
+  const headers = {
+    Authorization: `Bearer ${HF_API_KEY}`,
+    "Content-Type": "application/json",
+  };
+
+  // Provide an explicit schema and small example to encourage a clean JSON-only reply
+  const prompt = `Perform a DYOR (Do Your Own Research) analysis on the following user input.
+
+User input:
+${String(input)}
+
+Return ONLY a single valid JSON object (no extra text or markdown) with this structure:
+{
+  "input": "<original input as string>",
+  "confidence": <number 0-100>,
+  "analysis": "<detailed summary, pros/cons, key insights, and recommendations>"
+}
+
+Example:
+{
+  "input": "CoolNFT collection",
+  "confidence": 78,
+  "analysis": "Summary here..."
+}
+`;
+
   try {
     const response = await fetch(HF_URL, {
       headers,
@@ -106,28 +138,79 @@ export async function analyzePrompt(input) {
         model: "openai/gpt-oss-20b:fireworks-ai",
         messages: [
           {
-            role: "user",
-            content: input,
+            role: "system",
+            content:
+              "You are a helpful assistant that outputs strict JSON when asked.",
           },
+          { role: "user", content: prompt },
         ],
       }),
     });
+
     const data = await response.json();
-    if (!response.ok) throw new Error("Error in fetching response", data.error);
+    if (!response.ok) {
+      console.error("HF API error details:", data);
+      throw new Error(`HF API error: ${data.error || response.statusText}`);
+    }
+
     const rawText = data?.choices?.[0]?.message?.content || "";
-    const cleanedResponse = rawText.replace(/```json|```/g, "").trim();
+
+    // Try to extract the first JSON object from the model response
+    const jsonMatch = rawText.match(/{[\s\S]*}/);
+    const cleanedResponse = jsonMatch
+      ? jsonMatch[0].trim()
+      : rawText.replace(/```json|```/g, "").trim();
 
     let parsed;
     try {
-      parsed = JSON.parse(cleanedResponse); // Try to parse the JSON(cleanedResponse) directly
+      parsed = JSON.parse(cleanedResponse);
     } catch (e) {
       console.error(
-        `Failed to get a response from HuggingFace`,
+        "Failed to parse JSON from HuggingFace response:",
         cleanedResponse
       );
-      parsed = { raw_response: rawText }; // Fallback if it is not a valid JSON
+      throw new Error("Invalid JSON response from LLM");
     }
-    console.log(parsed);
+
+    // Validate expected fields and types
+    const missing = [];
+    if (!("input" in parsed)) missing.push("input");
+    if (!("confidence" in parsed)) missing.push("confidence");
+    if (!("analysis" in parsed)) missing.push("analysis");
+
+    if (missing.length) {
+      console.error(
+        "Missing required fields in JSON:",
+        missing,
+        "parsed:",
+        parsed
+      );
+      throw new Error(
+        `Invalid JSON structure: missing fields ${missing.join(", ")}`
+      );
+    }
+
+    if (typeof parsed.input !== "string") {
+      throw new Error("Invalid type: input must be a string");
+    }
+    if (typeof parsed.analysis !== "string") {
+      throw new Error("Invalid type: analysis must be a string");
+    }
+    if (typeof parsed.confidence !== "number") {
+      // allow numeric strings that can be coerced
+      const coerced = Number(parsed.confidence);
+      if (!Number.isFinite(coerced)) {
+        throw new Error("Invalid type: confidence must be a number");
+      }
+      parsed.confidence = coerced;
+    }
+
+    // Clamp confidence between 0-100
+    parsed.confidence = Math.max(0, Math.min(100, parsed.confidence));
+
     return parsed;
-  } catch (error) {}
+  } catch (error) {
+    console.error("Error generating analysis", error);
+    throw error;
+  }
 }

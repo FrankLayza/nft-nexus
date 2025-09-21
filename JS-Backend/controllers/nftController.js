@@ -36,24 +36,28 @@ export async function analyzeNFTHandler(req, res) {
 }
 export async function analyzePromptHandler(req, res) {
   try {
-    const { answer } = req.body;
-    if (!answer) {
+    const { prompt } = req.body;
+    if (typeof prompt !== "string" || prompt.trim().length === 0) {
       return res.status(400).json({
         success: false,
-        message: "Invalid request",
+        message: "Invalid request: prompt must be a non-empty string",
       });
     }
 
-    const result = await analyzePrompt({ answer });
+    const result = await analyzePrompt(prompt);
 
+    // Flatten the response for clients and avoid exposing internal details
     res.status(200).json({
       success: true,
-      analysis: result,
+      input: result.input,
+      confidence: result.confidence,
+      analysis: result.analysis,
     });
   } catch (error) {
+    console.error("analyzePromptHandler error:", error);
     res.status(500).json({
       success: false,
-      message: error.message || "Internal Server error",
+      message: "Failed to generate analysis",
     });
   }
 }

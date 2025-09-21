@@ -29,7 +29,9 @@ export interface NFTAnalysisResult {
 export interface AgentLog {
   logs: string[];
 }
-
+export interface DyorAnalysisInput {
+  prompt: string;
+}
 export interface DyorAnalysisResult {
   prompt: string;
   confidence: number;
@@ -41,11 +43,13 @@ const resultsCache: Record<string, NFTAnalysisResult> = {};
 class JuliaOSService {
   private baseUrl: string;
   private agentId: string;
+  private agentId2: string;
 
   constructor() {
     // Update this URL to match your JuliaOS backend
     this.baseUrl = "/api/api/v1";
     this.agentId = "analyze-nft";
+    this.agentId2 = "analyze-prompt";
   }
 
   /**
@@ -64,55 +68,54 @@ class JuliaOSService {
       }
 
       // 🚀 Trigger the agent analysis
-      const triggerResponse = await fetch(
-        `${this.baseUrl}/${this.agentId}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(input),
-        }
-      );
+      const triggerResponse = await fetch(`${this.baseUrl}/${this.agentId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(input),
+      });
 
       if (!triggerResponse.ok) {
         throw new Error(`Agent trigger failed: ${triggerResponse.statusText}`);
       }
 
-      // 🕒 Wait briefly for processing
-      // await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // 📜 Get logs to extract result
-      // const logsResponse = await fetch(
-      //   `${this.baseUrl}/agents/${this.agentId}/logs`
-      // );
-
-      // if (!logsResponse.ok) {
-      //   throw new Error(`Failed to get agent logs: ${logsResponse.statusText}`);
-      // }
-
-      // const logsData: AgentLog = await logsResponse.json();
-
-      // 🔍 Parse result from logs
-      // const result = this.parseAnalysisFromLogs(logsData.logs, input);
-
-      // 💾 Cache it for future requests
-      // resultsCache[cacheKey] = result;
-
-      // return result;
-      const data =  await triggerResponse.json()
-      if(!data.analysis || !data.success){
-        throw new Error("Invalid analysis response from the backend")
+      const data = await triggerResponse.json();
+      if (!data.analysis || !data.success) {
+        throw new Error("Invalid analysis response from the backend");
       }
-      console.log(data.analysis)
-      return data.analysis
+      console.log(data.analysis);
+      return data.analysis;
     } catch (error) {
       console.error("JuliaOS analysis failed:", error);
       throw error;
     }
   }
 
+  async analyzePrompt(input: DyorAnalysisInput): Promise<DyorAnalysisResult> {
+    try {
+      const response = await fetch(`${this.baseUrl}/${this.agentId2}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(input),
+      });
 
+      if (!response.ok) {
+        throw new Error(`Agent trigger failed: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      if (!data.analysis || !data.confidence || !data.input) {
+        throw new Error("Invalid analysis response from the backend");
+      }
+      return data
+    } catch (error) {
+      console.error("JuliaOS analysis failed:", error);
+      throw error;
+    }
+  }
 }
 // Export a singleton instance
 export const juliaOSService = new JuliaOSService();
