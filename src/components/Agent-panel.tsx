@@ -70,8 +70,9 @@ const AgentPanel = () => {
       // Call the JuliaOS agent
       const result = await juliaOSService.analyzeNFT(input);
       setAnalysisResult(result);
+      console.log(result.price_prediction)
 
-      console.log("JuliaOS agent analysis result:", result);
+      // console.log("JuliaOS agent analysis result:", result);
     } catch (err) {
       console.error("Analysis failed:", err);
       setError(err instanceof Error ? err.message : "Analysis failed");
@@ -175,7 +176,9 @@ const AgentPanel = () => {
                     <div>
                       <p className="text-gray-600">Price Target</p>
                       <p className="font-bold text-green-600 text-sm">
-                        {analysisResult?.price_prediction.toFixed(2) || "0"} ETH
+                        {typeof analysisResult?.price_prediction === "number"
+                          ? analysisResult.price_prediction.toFixed(2)
+                          : "0.00"} ETH
                       </p>
                     </div>
                     <div>

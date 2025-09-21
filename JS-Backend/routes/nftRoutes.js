@@ -1,5 +1,8 @@
 import express from "express";
-import { analyzeNFTHandler } from "../controllers/nftController.js";
+import {
+  analyzeNFTHandler,
+  analyzePromptHandler,
+} from "../controllers/nftController.js";
 const router = express.Router();
 
 /**
@@ -40,4 +43,6 @@ const router = express.Router();
  */
 
 router.post("/analyze-nft", analyzeNFTHandler);
+router.post("/analyze-prompt", analyzePromptHandler);
+
 export default router;

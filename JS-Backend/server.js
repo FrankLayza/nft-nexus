@@ -1,10 +1,10 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+dotenv.config({path: './.env'});
 import { setupSwagger } from "./swagger.js";
 import nftRoutes from "./routes/nftRoutes.js";
 
-dotenv.config();
 const app = express();
 const PORT = 4500;
 
